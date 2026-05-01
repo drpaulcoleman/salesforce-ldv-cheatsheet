@@ -471,40 +471,40 @@ ol.bullet li::before {
   <div class="nav-item" onclick="navTo('r04')"><div class="nav-dot" style="background:#C23934"></div><span class="nav-num">04</span>Biggest Offender Patterns</div>
   <div class="nav-item" onclick="navTo('r05')"><div class="nav-dot" style="background:#C23934"></div><span class="nav-num">05</span>Reports / Triggers / Flows at LDV</div>
   <div class="nav-item" onclick="navTo('r06')"><div class="nav-dot" style="background:#FF9A3C"></div><span class="nav-num">06</span>Governor Limits &amp; Cursor Gotchas</div>
-  <div class="nav-item" onclick="navTo('r07')"><div class="nav-dot" style="background:#a371f7"></div><span class="nav-num">07</span>CRM vs Data Cloud / Data 360</div>
 
-  <div class="nav-sec">SOQL Selectivity (Legacy Mirror)</div>
+  <div class="nav-sec">Query Selectivity</div>
   <div class="nav-item" onclick="navTo('r08')"><div class="nav-dot" style="background:#FF9A3C"></div><span class="nav-num">08</span>Indexed Fields &amp; Custom Indexes</div>
   <div class="nav-item" onclick="navTo('r09')"><div class="nav-dot" style="background:#FBBC04"></div><span class="nav-num">09</span>Selectivity Threshold Ladders</div>
   <div class="nav-item" onclick="navTo('r10')"><div class="nav-dot" style="background:#C23934"></div><span class="nav-num">10</span>Index-Defeating Query Patterns</div>
   <div class="nav-item" onclick="navTo('r11')"><div class="nav-dot" style="background:#FBBC04"></div><span class="nav-num">11</span>AND / OR / LIKE Behavior</div>
   <div class="nav-item" onclick="navTo('r12')"><div class="nav-dot" style="background:#52d68a"></div><span class="nav-num">12</span>Two-Pass Query Pattern</div>
 
-  <div class="nav-sec">SOQL / SOSL Patterns</div>
+  <div class="nav-sec">Query Execution Patterns</div>
   <div class="nav-item" onclick="navTo('r13')"><div class="nav-dot" style="background:#06A59A"></div><span class="nav-num">13</span>SOSL vs SOQL Decision</div>
   <div class="nav-item" onclick="navTo('r14')"><div class="nav-dot" style="background:#06A59A"></div><span class="nav-num">14</span>SOSL&rarr;SOQL Fallback &amp; Cache</div>
   <div class="nav-item" onclick="navTo('r15')"><div class="nav-dot" style="background:#06A59A"></div><span class="nav-num">15</span>Platform Cache (Customer Cache)</div>
   <div class="nav-item" onclick="navTo('r16')"><div class="nav-dot" style="background:#0070D2"></div><span class="nav-num">16</span>Iteration / Memory Patterns</div>
   <div class="nav-item" onclick="navTo('r17')"><div class="nav-dot" style="background:#0070D2"></div><span class="nav-num">17</span>Using SCOPE &amp; USER_MODE / SYSTEM_MODE</div>
 
-  <div class="nav-sec">Record Locking (Legacy Mirror)</div>
+  <div class="nav-sec">Record Locking</div>
   <div class="nav-item" onclick="navTo('r18')"><div class="nav-dot" style="background:#C23934"></div><span class="nav-num">18</span>Locking &mdash; Additive Principle</div>
   <div class="nav-item" onclick="navTo('r19')"><div class="nav-dot" style="background:#f08080"></div><span class="nav-num">19</span>Object-Specific Lock Matrix</div>
   <div class="nav-item" onclick="navTo('r20')"><div class="nav-dot" style="background:#f08080"></div><span class="nav-num">20</span>Custom Config &amp; Sharing Locks</div>
   <div class="nav-item" onclick="navTo('r21')"><div class="nav-dot" style="background:#C23934"></div><span class="nav-num">21</span>UNABLE_TO_LOCK_ROW Recovery</div>
 
-  <div class="nav-sec">Data Skew</div>
+  <div class="nav-sec">Sharing &amp; Distribution at Scale</div>
   <div class="nav-item" onclick="navTo('r22')"><div class="nav-dot" style="background:#FF9A3C"></div><span class="nav-num">22</span>Account / Owner / Lookup Skew</div>
-
-  <div class="nav-sec">Bulk &amp; Sharing</div>
-  <div class="nav-item" onclick="navTo('r23')"><div class="nav-dot" style="background:#FBBC04"></div><span class="nav-num">23</span>Bulk API 2.0, DML Order, PK Chunking</div>
   <div class="nav-item" onclick="navTo('r24')"><div class="nav-dot" style="background:#04844B"></div><span class="nav-num">24</span>Defer Sharing / Granular Locking</div>
-  <div class="nav-item" onclick="navTo('r25')"><div class="nav-dot" style="background:#04844B"></div><span class="nav-num">25</span>Hard Delete / Truncate / Recycle Bin</div>
 
-  <div class="nav-sec">Architecture &amp; Archive</div>
+  <div class="nav-sec">Bulk &amp; Async Patterns</div>
+  <div class="nav-item" onclick="navTo('r23')"><div class="nav-dot" style="background:#FBBC04"></div><span class="nav-num">23</span>Bulk API 2.0, DML Order, PK Chunking</div>
+  <div class="nav-item" onclick="navTo('r25')"><div class="nav-dot" style="background:#04844B"></div><span class="nav-num">25</span>Hard Delete / Truncate / Recycle Bin</div>
+  <div class="nav-item" onclick="navTo('r28')"><div class="nav-dot" style="background:#0070D2"></div><span class="nav-num">28</span>Continuations &amp; LWC Async</div>
+
+  <div class="nav-sec">Data Lifecycle &mdash; What Belongs in CRM</div>
+  <div class="nav-item" onclick="navTo('r07')"><div class="nav-dot" style="background:#a371f7"></div><span class="nav-num">07</span>CRM vs Data Cloud / Data 360</div>
   <div class="nav-item" onclick="navTo('r26')"><div class="nav-dot" style="background:#a371f7"></div><span class="nav-num">26</span>Skinny Tables &amp; External IDs</div>
   <div class="nav-item" onclick="navTo('r27')"><div class="nav-dot" style="background:#a371f7"></div><span class="nav-num">27</span>Hot/Cold &mdash; Archive &amp; Virtualize</div>
-  <div class="nav-item" onclick="navTo('r28')"><div class="nav-dot" style="background:#0070D2"></div><span class="nav-num">28</span>Continuations &amp; LWC Async</div>
 
   <div class="nav-sec">Diagnostics &amp; Monitoring</div>
   <div class="nav-item" onclick="navTo('r29')"><div class="nav-dot" style="background:#9050E9"></div><span class="nav-num">29</span>Shield Real-Time Event Monitoring</div>
