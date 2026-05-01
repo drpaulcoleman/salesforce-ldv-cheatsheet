@@ -109,6 +109,12 @@ a.rref:hover {
 .nav-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .nav-num { font-size: 10.5px; color: #5B7BA5; width: 20px; flex-shrink: 0; font-weight: 700;
   font-family: 'Source Code Pro', monospace; }
+.nav-tier { font-size: 8.5px; font-weight: 800; padding: 1px 4px; border-radius: 2px;
+  letter-spacing: .04em; font-family: 'Source Code Pro', monospace;
+  flex-shrink: 0; line-height: 1.1; }
+.nav-tier.t1 { background: rgba(255,154,60,0.18); color: #FF9A3C; border: 1px solid rgba(255,154,60,0.40); }
+.nav-tier.t2 { background: rgba(0,112,210,0.14); color: #79C0FF; border: 1px solid rgba(0,112,210,0.32); }
+.nav-tier.t3 { background: rgba(91,123,165,0.10); color: #6B8AB0; border: 1px solid rgba(91,123,165,0.22); }
 .nav-kbd { padding: 4px 16px 8px; font-size: 11.5px; color: #5B7BA5; line-height: 1.9; }
 .nav-kbd kbd { background: #0a1830; border: 1px solid #1E4D7B; border-radius: 3px;
   padding: 1px 5px; color: #B0C4DE; font-size: 10.5px; font-family: 'Source Code Pro', monospace; }
@@ -446,7 +452,7 @@ ol.bullet li::before {
     <p>Last Modified 2026-MAY-01 &middot; &copy; 2026 Dr. Paul Coleman &middot; Unofficial Reference</p>
   </div>
   <div id="hdr-stats">
-    <div class="st"><div class="st-dot" style="background:#0070D2"></div><span class="st-v">35</span>&nbsp;Regions</div>
+    <div class="st"><div class="st-dot" style="background:#0070D2"></div><span class="st-v">37</span>&nbsp;Regions</div>
     <div class="st"><div class="st-dot" style="background:#FF9A3C"></div><span class="st-v">40+</span>&nbsp;Thresholds</div>
     <div class="st"><div class="st-dot" style="background:#C23934"></div><span class="st-v">25+</span>&nbsp;Anti-Patterns</div>
     <div class="st"><div class="st-dot" style="background:#9050E9"></div><span class="st-v">7</span>&nbsp;Support Asks</div>
@@ -462,62 +468,73 @@ ol.bullet li::before {
     Salesforce release notes before production use.
   </div>
 
+  <div class="nav-sec">Start Here</div>
+  <div class="nav-item" onclick="navTo('r00')"><span class="nav-tier t1">T1</span><div class="nav-dot" style="background:#FF9A3C"></div><span class="nav-num">00</span>TL;DR &mdash; Cheatsheet in 5 Cards</div>
+
   <div class="nav-sec">Foundations</div>
-  <div class="nav-item" onclick="navTo('r01')"><div class="nav-dot" style="background:#0070D2"></div><span class="nav-num">01</span>What Is LDV? Mental Model</div>
-  <div class="nav-item" onclick="navTo('r02')"><div class="nav-dot" style="background:#79C0FF"></div><span class="nav-num">02</span>Multi-Tenant Architecture</div>
-  <div class="nav-item" onclick="navTo('r03')"><div class="nav-dot" style="background:#1589EE"></div><span class="nav-num">03</span>Query Optimizer &amp; Statistics</div>
+  <div class="nav-item" onclick="navTo('r01')"><span class="nav-tier t1">T1</span><div class="nav-dot" style="background:#0070D2"></div><span class="nav-num">01</span>What Is LDV? Mental Model</div>
+  <div class="nav-item" onclick="navTo('r02')"><span class="nav-tier t3">T3</span><div class="nav-dot" style="background:#79C0FF"></div><span class="nav-num">02</span>Multi-Tenant Architecture</div>
+  <div class="nav-item" onclick="navTo('r03')"><span class="nav-tier t2">T2</span><div class="nav-dot" style="background:#1589EE"></div><span class="nav-num">03</span>Query Optimizer &amp; Statistics</div>
 
   <div class="nav-sec">Limits &amp; Anti-Patterns</div>
-  <div class="nav-item" onclick="navTo('r04')"><div class="nav-dot" style="background:#C23934"></div><span class="nav-num">04</span>Biggest Offender Patterns</div>
-  <div class="nav-item" onclick="navTo('r05')"><div class="nav-dot" style="background:#C23934"></div><span class="nav-num">05</span>Reports / Triggers / Flows at LDV</div>
-  <div class="nav-item" onclick="navTo('r06')"><div class="nav-dot" style="background:#FF9A3C"></div><span class="nav-num">06</span>Governor Limits &amp; Cursor Gotchas</div>
+  <div class="nav-item" onclick="navTo('r04')"><span class="nav-tier t1">T1</span><div class="nav-dot" style="background:#C23934"></div><span class="nav-num">04</span>Biggest Offender Patterns</div>
+  <div class="nav-item" onclick="navTo('r05')"><span class="nav-tier t2">T2</span><div class="nav-dot" style="background:#C23934"></div><span class="nav-num">05</span>Reports / Triggers / Flows at LDV</div>
+  <div class="nav-item" onclick="navTo('r06')"><span class="nav-tier t3">T3</span><div class="nav-dot" style="background:#FF9A3C"></div><span class="nav-num">06</span>Governor Limits &amp; Cursor Gotchas</div>
 
   <div class="nav-sec">Query Selectivity</div>
-  <div class="nav-item" onclick="navTo('r08')"><div class="nav-dot" style="background:#FF9A3C"></div><span class="nav-num">08</span>Indexed Fields &amp; Custom Indexes</div>
-  <div class="nav-item" onclick="navTo('r09')"><div class="nav-dot" style="background:#FBBC04"></div><span class="nav-num">09</span>Selectivity Threshold Ladders</div>
-  <div class="nav-item" onclick="navTo('r10')"><div class="nav-dot" style="background:#C23934"></div><span class="nav-num">10</span>Index-Defeating Query Patterns</div>
-  <div class="nav-item" onclick="navTo('r11')"><div class="nav-dot" style="background:#FBBC04"></div><span class="nav-num">11</span>AND / OR / LIKE Behavior</div>
-  <div class="nav-item" onclick="navTo('r12')"><div class="nav-dot" style="background:#52d68a"></div><span class="nav-num">12</span>Two-Pass Query Pattern</div>
+  <div class="nav-item" onclick="navTo('r08')"><span class="nav-tier t2">T2</span><div class="nav-dot" style="background:#FF9A3C"></div><span class="nav-num">08</span>Indexed Fields &amp; Custom Indexes</div>
+  <div class="nav-item" onclick="navTo('r09')"><span class="nav-tier t2">T2</span><div class="nav-dot" style="background:#FBBC04"></div><span class="nav-num">09</span>Selectivity Threshold Ladders</div>
+  <div class="nav-item" onclick="navTo('r10')"><span class="nav-tier t1">T1</span><div class="nav-dot" style="background:#C23934"></div><span class="nav-num">10</span>Index-Defeating Query Patterns</div>
+  <div class="nav-item" onclick="navTo('r11')"><span class="nav-tier t3">T3</span><div class="nav-dot" style="background:#FBBC04"></div><span class="nav-num">11</span>AND / OR / LIKE Behavior</div>
+  <div class="nav-item" onclick="navTo('r12')"><span class="nav-tier t2">T2</span><div class="nav-dot" style="background:#52d68a"></div><span class="nav-num">12</span>Two-Pass Query Pattern</div>
 
   <div class="nav-sec">Query Execution Patterns</div>
-  <div class="nav-item" onclick="navTo('r13')"><div class="nav-dot" style="background:#06A59A"></div><span class="nav-num">13</span>SOSL vs SOQL Decision</div>
-  <div class="nav-item" onclick="navTo('r14')"><div class="nav-dot" style="background:#06A59A"></div><span class="nav-num">14</span>SOSL&rarr;SOQL Fallback &amp; Cache</div>
-  <div class="nav-item" onclick="navTo('r15')"><div class="nav-dot" style="background:#06A59A"></div><span class="nav-num">15</span>Platform Cache (Customer Cache)</div>
-  <div class="nav-item" onclick="navTo('r16')"><div class="nav-dot" style="background:#0070D2"></div><span class="nav-num">16</span>Iteration / Memory Patterns</div>
-  <div class="nav-item" onclick="navTo('r17')"><div class="nav-dot" style="background:#0070D2"></div><span class="nav-num">17</span>Using SCOPE &amp; USER_MODE / SYSTEM_MODE</div>
+  <div class="nav-item" onclick="navTo('r13')"><span class="nav-tier t3">T3</span><div class="nav-dot" style="background:#06A59A"></div><span class="nav-num">13</span>SOSL vs SOQL Decision</div>
+  <div class="nav-item" onclick="navTo('r14')"><span class="nav-tier t3">T3</span><div class="nav-dot" style="background:#06A59A"></div><span class="nav-num">14</span>SOSL&rarr;SOQL Fallback &amp; Cache</div>
+  <div class="nav-item" onclick="navTo('r15')"><span class="nav-tier t3">T3</span><div class="nav-dot" style="background:#06A59A"></div><span class="nav-num">15</span>Platform Cache (Customer Cache)</div>
+  <div class="nav-item" onclick="navTo('r16')"><span class="nav-tier t3">T3</span><div class="nav-dot" style="background:#0070D2"></div><span class="nav-num">16</span>Iteration / Memory Patterns</div>
+  <div class="nav-item" onclick="navTo('r17')"><span class="nav-tier t3">T3</span><div class="nav-dot" style="background:#0070D2"></div><span class="nav-num">17</span>Using SCOPE &amp; USER_MODE / SYSTEM_MODE</div>
 
   <div class="nav-sec">Record Locking</div>
-  <div class="nav-item" onclick="navTo('r18')"><div class="nav-dot" style="background:#C23934"></div><span class="nav-num">18</span>Locking &mdash; Additive Principle</div>
-  <div class="nav-item" onclick="navTo('r19')"><div class="nav-dot" style="background:#f08080"></div><span class="nav-num">19</span>Object-Specific Lock Matrix</div>
-  <div class="nav-item" onclick="navTo('r20')"><div class="nav-dot" style="background:#f08080"></div><span class="nav-num">20</span>Custom Config &amp; Sharing Locks</div>
-  <div class="nav-item" onclick="navTo('r21')"><div class="nav-dot" style="background:#C23934"></div><span class="nav-num">21</span>UNABLE_TO_LOCK_ROW Recovery</div>
+  <div class="nav-item" onclick="navTo('r18')"><span class="nav-tier t2">T2</span><div class="nav-dot" style="background:#C23934"></div><span class="nav-num">18</span>Locking &mdash; Additive Principle</div>
+  <div class="nav-item" onclick="navTo('r19')"><span class="nav-tier t3">T3</span><div class="nav-dot" style="background:#f08080"></div><span class="nav-num">19</span>Object-Specific Lock Matrix</div>
+  <div class="nav-item" onclick="navTo('r20')"><span class="nav-tier t3">T3</span><div class="nav-dot" style="background:#f08080"></div><span class="nav-num">20</span>Custom Config &amp; Sharing Locks</div>
+  <div class="nav-item" onclick="navTo('r21')"><span class="nav-tier t2">T2</span><div class="nav-dot" style="background:#C23934"></div><span class="nav-num">21</span>UNABLE_TO_LOCK_ROW Recovery</div>
 
   <div class="nav-sec">Sharing &amp; Distribution at Scale</div>
-  <div class="nav-item" onclick="navTo('r22')"><div class="nav-dot" style="background:#FF9A3C"></div><span class="nav-num">22</span>Account / Owner / Lookup Skew</div>
-  <div class="nav-item" onclick="navTo('r24')"><div class="nav-dot" style="background:#04844B"></div><span class="nav-num">24</span>Defer Sharing / Granular Locking</div>
+  <div class="nav-item" onclick="navTo('r22')"><span class="nav-tier t2">T2</span><div class="nav-dot" style="background:#FF9A3C"></div><span class="nav-num">22</span>Account / Owner / Lookup Skew</div>
+  <div class="nav-item" onclick="navTo('r24')"><span class="nav-tier t2">T2</span><div class="nav-dot" style="background:#04844B"></div><span class="nav-num">24</span>Defer Sharing / Granular Locking</div>
 
   <div class="nav-sec">Bulk &amp; Async Patterns</div>
-  <div class="nav-item" onclick="navTo('r23')"><div class="nav-dot" style="background:#FBBC04"></div><span class="nav-num">23</span>Bulk API 2.0, DML Order, PK Chunking</div>
-  <div class="nav-item" onclick="navTo('r25')"><div class="nav-dot" style="background:#04844B"></div><span class="nav-num">25</span>Hard Delete / Truncate / Recycle Bin</div>
-  <div class="nav-item" onclick="navTo('r28')"><div class="nav-dot" style="background:#0070D2"></div><span class="nav-num">28</span>Continuations &amp; LWC Async</div>
+  <div class="nav-item" onclick="navTo('r23')"><span class="nav-tier t2">T2</span><div class="nav-dot" style="background:#FBBC04"></div><span class="nav-num">23</span>Bulk API 2.0, DML Order, PK Chunking</div>
+  <div class="nav-item" onclick="navTo('r25')"><span class="nav-tier t3">T3</span><div class="nav-dot" style="background:#04844B"></div><span class="nav-num">25</span>Hard Delete / Truncate / Recycle Bin</div>
+  <div class="nav-item" onclick="navTo('r28')"><span class="nav-tier t3">T3</span><div class="nav-dot" style="background:#0070D2"></div><span class="nav-num">28</span>Continuations &amp; LWC Async</div>
 
   <div class="nav-sec">Data Lifecycle &mdash; What Belongs in CRM</div>
-  <div class="nav-item" onclick="navTo('r07')"><div class="nav-dot" style="background:#a371f7"></div><span class="nav-num">07</span>CRM vs Data Cloud / Data 360</div>
-  <div class="nav-item" onclick="navTo('r26')"><div class="nav-dot" style="background:#a371f7"></div><span class="nav-num">26</span>Skinny Tables &amp; External IDs</div>
-  <div class="nav-item" onclick="navTo('r27')"><div class="nav-dot" style="background:#a371f7"></div><span class="nav-num">27</span>Hot/Cold &mdash; Archive &amp; Virtualize</div>
+  <div class="nav-item" onclick="navTo('r07')"><span class="nav-tier t1">T1</span><div class="nav-dot" style="background:#a371f7"></div><span class="nav-num">07</span>CRM vs Data Cloud / Data 360</div>
+  <div class="nav-item" onclick="navTo('r26')"><span class="nav-tier t3">T3</span><div class="nav-dot" style="background:#a371f7"></div><span class="nav-num">26</span>Skinny Tables &amp; External IDs</div>
+  <div class="nav-item" onclick="navTo('r27')"><span class="nav-tier t2">T2</span><div class="nav-dot" style="background:#a371f7"></div><span class="nav-num">27</span>Hot/Cold &mdash; Archive &amp; Virtualize</div>
 
   <div class="nav-sec">Diagnostics &amp; Monitoring</div>
-  <div class="nav-item" onclick="navTo('r29')"><div class="nav-dot" style="background:#9050E9"></div><span class="nav-num">29</span>Shield Real-Time Event Monitoring</div>
-  <div class="nav-item" onclick="navTo('r30')"><div class="nav-dot" style="background:#79C0FF"></div><span class="nav-num">30</span>Optimizer App, Query Plan, ELO</div>
-  <div class="nav-item" onclick="navTo('r30b')"><div class="nav-dot" style="background:#9050E9"></div><span class="nav-num">30b</span>Scale Center, Scale Test, Apex Guru</div>
+  <div class="nav-item" onclick="navTo('r29')"><span class="nav-tier t2">T2</span><div class="nav-dot" style="background:#9050E9"></div><span class="nav-num">29</span>Shield Real-Time Event Monitoring</div>
+  <div class="nav-item" onclick="navTo('r30')"><span class="nav-tier t2">T2</span><div class="nav-dot" style="background:#79C0FF"></div><span class="nav-num">30</span>Optimizer App, Query Plan, ELO</div>
+  <div class="nav-item" onclick="navTo('r30b')"><span class="nav-tier t1">T1</span><div class="nav-dot" style="background:#9050E9"></div><span class="nav-num">30b</span>Scale Center, Scale Test, Apex Guru</div>
 
   <div class="nav-sec">Escalation &amp; AI</div>
-  <div class="nav-item" onclick="navTo('r31')"><div class="nav-dot" style="background:#c9a0ff"></div><span class="nav-num">31</span>When To Contact Salesforce Support</div>
-  <div class="nav-item" onclick="navTo('r32')"><div class="nav-dot" style="background:#46E3B7"></div><span class="nav-num">32</span>AI-Assisted LDV Audits</div>
+  <div class="nav-item" onclick="navTo('r31')"><span class="nav-tier t2">T2</span><div class="nav-dot" style="background:#c9a0ff"></div><span class="nav-num">31</span>When To Contact Salesforce Support</div>
+  <div class="nav-item" onclick="navTo('r32')"><span class="nav-tier t2">T2</span><div class="nav-dot" style="background:#46E3B7"></div><span class="nav-num">32</span>AI-Assisted LDV Audits</div>
 
   <div class="nav-sec">Reference</div>
-  <div class="nav-item" onclick="navTo('r33')"><div class="nav-dot" style="background:#FF9A3C"></div><span class="nav-num">33</span>Numerical Threshold Index</div>
-  <div class="nav-item" onclick="navTo('r34')"><div class="nav-dot" style="background:#79C0FF"></div><span class="nav-num">34</span>Citations &amp; Further Reading</div>
+  <div class="nav-item" onclick="navTo('r33')"><span class="nav-tier t2">T2</span><div class="nav-dot" style="background:#FF9A3C"></div><span class="nav-num">33</span>Numerical Threshold Index</div>
+  <div class="nav-item" onclick="navTo('r33b')"><span class="nav-tier t2">T2</span><div class="nav-dot" style="background:#B0C4DE"></div><span class="nav-num">33b</span>Glossary &mdash; LDV Acronyms</div>
+  <div class="nav-item" onclick="navTo('r34')"><span class="nav-tier t3">T3</span><div class="nav-dot" style="background:#79C0FF"></div><span class="nav-num">34</span>Citations &amp; Further Reading</div>
+
+  <div class="nav-sec">Reading Tiers</div>
+  <div class="nav-kbd">
+    <div><span class="nav-tier t1">T1</span> Read first &mdash; the curated 6-region path (~20 min).</div>
+    <div><span class="nav-tier t2">T2</span> Architect baseline &mdash; depth on selectivity, sharing, diagnostics.</div>
+    <div><span class="nav-tier t3">T3</span> Deep dive &mdash; reach for these by reference, not in sequence.</div>
+  </div>
 
   <div class="nav-sec">Keyboard</div>
   <div class="nav-kbd">
@@ -552,6 +569,108 @@ ol.bullet li::before {
 
 <div id="viewport">
 <div id="canvas">
+
+
+<!-- ════════════════════════════════════════════════════════════════════
+     REGION 00 — TL;DR / EXECUTIVE BOTTOM LINE
+     The "if you read nothing else" entry point.
+════════════════════════════════════════════════════════════════════════ -->
+<div id="r00" class="region r-orange">
+<div class="rh">00 &mdash; TL;DR &mdash; The Cheatsheet in Five Cards</div>
+<div class="rb">
+
+  <div class="hot-cold-box mb-12">
+    <span class="axiom">&#128205; The single sentence: at LDV scale, every query must hit an index, every batch must be selective, and every record kept "hot" pays a daily tax.</span>
+    Read this region in 90 seconds. Drill into <a class="rref" href="#r01" onclick="navTo('r01');return false;">&sect;01</a>+ when a specific lever needs attention. The sidebar groups the rest of the doc by topic; this region groups it by <em>"what do I need right now?"</em>
+  </div>
+
+  <div class="grid-2 gap-12">
+
+    <div class="card" data-search="tldr top five things to remember selectivity skew async archive diagnostics">
+      <div class="ch ch-orange">&#127919; The Five Things to Remember</div>
+      <div class="cb">
+        <ol class="bullet">
+          <li><span class="bold">Selectivity beats everything.</span> A query that returns &lt; 10% of rows on an indexed leading filter is fast at any scale. A query that doesn't is slow at any scale. <a class="rref" href="#r08" onclick="navTo('r08');return false;">&sect;08</a></li>
+          <li><span class="bold">The CRM is not a data lake.</span> Salesforce is a transactional system of engagement &mdash; not a warehouse, archive, or 10-year reporting backend. Hot data only. <a class="rref" href="#r07" onclick="navTo('r07');return false;">&sect;07</a> &middot; <a class="rref" href="#r27" onclick="navTo('r27');return false;">&sect;27</a></li>
+          <li><span class="bold">Skew is silent until it explodes.</span> &gt; 10K children per parent, &gt; 10K records per owner, &gt; 10K records per lookup &mdash; each is a lock-storm waiting for a bulk job. <a class="rref" href="#r22" onclick="navTo('r22');return false;">&sect;22</a></li>
+          <li><span class="bold">Measure before redesigning.</span> Query Plan tells you whether an index is in use; Scale Center tells you whether the org is healthy; Apex Guru tells you what to fix first. <a class="rref" href="#r30" onclick="navTo('r30');return false;">&sect;30</a> &middot; <a class="rref" href="#r30b" onclick="navTo('r30b');return false;">&sect;30b</a></li>
+          <li><span class="bold">Test at scale before cutover.</span> Scale Test in Full Sandbox is the only sanctioned way to validate LDV behavior pre-prod. The lock-contention class of regression cannot be reversed in flight. <a class="rref" href="#r30b" onclick="navTo('r30b');return false;">&sect;30b</a></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="card" data-search="tldr ootb diagnostic stack tools query plan scale center apex guru shield rem ladder">
+      <div class="ch ch-orange">&#128270; The OOTB Diagnostic Stack &mdash; Five Tools, Climbed in Order</div>
+      <div class="cb">
+        <div class="text-sm text-muted mb-6">Climb only as far as the question requires. Most LDV regressions are caught at the first two rungs.</div>
+        <table class="tbl">
+          <thead><tr><th>Rung</th><th>Tool</th><th>Answers</th><th>Cost</th></tr></thead>
+          <tbody>
+            <tr><td class="numcell">1</td><td class="bf">Query Plan</td><td>Will this single query use an index?</td><td class="text-green">free, seconds</td></tr>
+            <tr><td class="numcell">2</td><td class="bf">Apex Guru</td><td>What in my prod code should I fix first?</td><td class="text-yellow">license, minutes</td></tr>
+            <tr><td class="numcell">3</td><td class="bf">Lightning Usage</td><td>Which page actually feels slow to users?</td><td class="text-green">free, hours</td></tr>
+            <tr><td class="numcell">4</td><td class="bf">Scale Center</td><td>Is the whole org healthy? What's drifting?</td><td class="text-yellow">free Perf/UE, hours</td></tr>
+            <tr><td class="numcell">5</td><td class="bf">Shield REM + ELO</td><td>Why did request X take 47 seconds at 14:23?</td><td class="text-orange">Shield/EM, deep</td></tr>
+            <tr><td class="numcell">6</td><td class="bf">Scale Test</td><td>Will the org survive 5&times; current load?</td><td class="text-red">Full Sandbox, days</td></tr>
+          </tbody>
+        </table>
+        <div class="tip-box mt-6"><strong>Diagnostic ritual:</strong> Query Plan before merge &middot; Apex Guru weekly &middot; Scale Center daily during release soak &middot; Shield REM streaming for ops &middot; Scale Test before cutover. <a class="rref" href="#r30b" onclick="navTo('r30b');return false;">&sect;30b</a></div>
+      </div>
+    </div>
+
+    <div class="card" data-search="tldr license cost matrix shield em add on free perf unlimited">
+      <div class="ch ch-orange">&#128181; License &amp; Cost &mdash; What You Need to Buy</div>
+      <div class="cb">
+        <table class="tbl">
+          <thead><tr><th>Capability</th><th>License</th><th>Where</th></tr></thead>
+          <tbody>
+            <tr class="row-cat"><td colspan="3">Free in all editions</td></tr>
+            <tr><td>Query Plan / SOQL Explain</td><td class="text-green">free</td><td><a class="rref" href="#r30" onclick="navTo('r30');return false;">&sect;30</a></td></tr>
+            <tr><td>Optimizer App</td><td class="text-green">free</td><td><a class="rref" href="#r30" onclick="navTo('r30');return false;">&sect;30</a></td></tr>
+            <tr><td>Lightning Usage App</td><td class="text-green">free</td><td><a class="rref" href="#r30b" onclick="navTo('r30b');return false;">&sect;30b</a></td></tr>
+            <tr><td>Event Log Files (ELF)</td><td class="text-green">free (basic)</td><td><a class="rref" href="#r30" onclick="navTo('r30');return false;">&sect;30</a></td></tr>
+            <tr class="row-cat"><td colspan="3">Edition-gated (Performance / Unlimited)</td></tr>
+            <tr><td>Scale Center (full)</td><td class="text-yellow">Perf / UE</td><td><a class="rref" href="#r30b" onclick="navTo('r30b');return false;">&sect;30b</a></td></tr>
+            <tr><td>Apex Guru</td><td class="text-yellow">Perf / UE</td><td><a class="rref" href="#r30b" onclick="navTo('r30b');return false;">&sect;30b</a></td></tr>
+            <tr class="row-cat"><td colspan="3">Add-on / Bundle Required</td></tr>
+            <tr><td>Shield Real-Time Event Monitoring</td><td class="text-orange">Shield / EM add-on</td><td><a class="rref" href="#r29" onclick="navTo('r29');return false;">&sect;29</a></td></tr>
+            <tr><td>Field Audit Trail</td><td class="text-orange">Shield bundle</td><td><a class="rref" href="#r29" onclick="navTo('r29');return false;">&sect;29</a></td></tr>
+            <tr><td>Threat Detection events</td><td class="text-orange">EE+ &amp; Shield</td><td><a class="rref" href="#r29" onclick="navTo('r29');return false;">&sect;29</a></td></tr>
+            <tr class="row-cat"><td colspan="3">Salesforce Support engagement</td></tr>
+            <tr><td>Custom Indexes / Skinny Tables</td><td class="text-violet">Support case</td><td><a class="rref" href="#r31" onclick="navTo('r31');return false;">&sect;31</a></td></tr>
+            <tr><td>Defer Sharing Calc / Granular Locking</td><td class="text-violet">Support case</td><td><a class="rref" href="#r31" onclick="navTo('r31');return false;">&sect;31</a></td></tr>
+            <tr><td>Scale Test (sometimes)</td><td class="text-violet">Engagement</td><td><a class="rref" href="#r30b" onclick="navTo('r30b');return false;">&sect;30b</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" data-search="tldr symptom decision tree what region first navigation chooser">
+      <div class="ch ch-orange">&#129518; Symptom &rarr; Region &mdash; The Quick Chooser</div>
+      <div class="cb">
+        <table class="tbl">
+          <thead><tr><th>Symptom</th><th>Start Here</th></tr></thead>
+          <tbody>
+            <tr><td>"This SOQL is slow"</td><td><a class="rref" href="#r10" onclick="navTo('r10');return false;">&sect;10</a> + <a class="rref" href="#r30" onclick="navTo('r30');return false;">&sect;30</a></td></tr>
+            <tr><td>"Reports / list views time out"</td><td><a class="rref" href="#r05" onclick="navTo('r05');return false;">&sect;05</a> + <a class="rref" href="#r10" onclick="navTo('r10');return false;">&sect;10</a></td></tr>
+            <tr><td><span class="mono">UNABLE_TO_LOCK_ROW</span></td><td><a class="rref" href="#r18" onclick="navTo('r18');return false;">&sect;18</a>&ndash;<a class="rref" href="#r21" onclick="navTo('r21');return false;">&sect;21</a></td></tr>
+            <tr><td>Bulk DML / migration job blowing up</td><td><a class="rref" href="#r23" onclick="navTo('r23');return false;">&sect;23</a> + <a class="rref" href="#r24" onclick="navTo('r24');return false;">&sect;24</a></td></tr>
+            <tr><td><span class="mono">CONCURRENT_REQUESTS_LIMIT</span></td><td><a class="rref" href="#r06" onclick="navTo('r06');return false;">&sect;06</a> + <a class="rref" href="#r28" onclick="navTo('r28');return false;">&sect;28</a></td></tr>
+            <tr><td>Lightning page TTI &gt; 5s</td><td><a class="rref" href="#r30b" onclick="navTo('r30b');return false;">&sect;30b</a> &rarr; <a class="rref" href="#r29" onclick="navTo('r29');return false;">&sect;29</a></td></tr>
+            <tr><td>"Org is generally drifting / slower than last quarter"</td><td><a class="rref" href="#r30b" onclick="navTo('r30b');return false;">&sect;30b</a> + <a class="rref" href="#r30" onclick="navTo('r30');return false;">&sect;30</a></td></tr>
+            <tr><td>Skew (one parent / one owner / one lookup value)</td><td><a class="rref" href="#r22" onclick="navTo('r22');return false;">&sect;22</a></td></tr>
+            <tr><td>"We have 7 years of closed Cases hot"</td><td><a class="rref" href="#r07" onclick="navTo('r07');return false;">&sect;07</a> + <a class="rref" href="#r27" onclick="navTo('r27');return false;">&sect;27</a></td></tr>
+            <tr><td>Pre-cutover load validation</td><td><a class="rref" href="#r30b" onclick="navTo('r30b');return false;">&sect;30b</a> (Scale Test)</td></tr>
+            <tr><td>"Salesforce wants me to file a case &mdash; what do I bring?"</td><td><a class="rref" href="#r31" onclick="navTo('r31');return false;">&sect;31</a></td></tr>
+            <tr><td>Want to AI-audit a class / Flow / archive policy</td><td><a class="rref" href="#r32" onclick="navTo('r32');return false;">&sect;32</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
 
 
 <!-- ════════════════════════════════════════════════════════════════════
@@ -4357,6 +4476,110 @@ Notes: <span class="ok">Index</span></pre>
     </tbody>
   </table>
 
+</div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════════
+     REGION 30c — GLOSSARY
+     LDV / Salesforce acronyms in one place; useful for first-time readers.
+════════════════════════════════════════════════════════════════════════ -->
+<div id="r33b" class="region r-slate">
+<div class="rh">33b &mdash; Glossary &mdash; LDV Acronyms &amp; Jargon</div>
+<div class="rb">
+
+  <div class="info-box mb-12"><strong>Why this exists:</strong> the rest of this cheatsheet earns its density by leaning on shorthand. This region is the lookup table. If you've ever wondered what EPT, ELO, REM, DRAES, or VLSQ stands for &mdash; you're in the right place.</div>
+
+  <div class="grid-2 gap-12">
+
+    <div class="card" data-search="glossary platform performance acronyms ept ttf tti elo elf rem">
+      <div class="ch ch-grey">Platform &amp; Performance</div>
+      <div class="cb">
+        <table class="tbl">
+          <tbody>
+            <tr><td class="bf mono">LDV</td><td>Large Data Volume &mdash; the umbrella label for orgs at "tens of millions of records / tens of thousands of users / hundreds of GB" scale. <a class="rref" href="#r01" onclick="navTo('r01');return false;">&sect;01</a></td></tr>
+            <tr><td class="bf mono">EPT</td><td>Experienced Page Time. The user-perceived load time for a Lightning page; the canonical UX performance metric. Surfaced in Lightning Usage App and Scale Center.</td></tr>
+            <tr><td class="bf mono">TTI</td><td>Time-To-Interactive. Sub-metric inside EPT &mdash; when the page becomes responsive to clicks vs fully painted.</td></tr>
+            <tr><td class="bf mono">TTFB</td><td>Time-To-First-Byte. Network-layer perf signal preceding TTI.</td></tr>
+            <tr><td class="bf mono">REM</td><td>Real-Time Event Monitoring. Shield's near-real-time event-streaming product. <a class="rref" href="#r29" onclick="navTo('r29');return false;">&sect;29</a></td></tr>
+            <tr><td class="bf mono">ELF</td><td>Event Log File. The older CSV-per-event-type surface for monitoring data; downloaded via REST. <a class="rref" href="#r30" onclick="navTo('r30');return false;">&sect;30</a></td></tr>
+            <tr><td class="bf mono">ELO</td><td>Event Log Object. The newer, SOQL-queryable surface for event data on Hyperforce. <a class="rref" href="#r29" onclick="navTo('r29');return false;">&sect;29</a></td></tr>
+            <tr><td class="bf mono">FAT</td><td>Field Audit Trail. Shield's historical-state-of-any-field feature, backed by Big Objects. <a class="rref" href="#r29" onclick="navTo('r29');return false;">&sect;29</a></td></tr>
+            <tr><td class="bf mono">PE</td><td>Platform Event. Salesforce's pub/sub event-driven primitive (separate from REM).</td></tr>
+            <tr><td class="bf mono">CDC</td><td>Change Data Capture. Streaming mechanism that emits change events for record CRUD operations.</td></tr>
+            <tr><td class="bf mono">CPU/HEAP</td><td>Apex governor limits: CPU time per transaction and heap-size ceilings. <a class="rref" href="#r06" onclick="navTo('r06');return false;">&sect;06</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" data-search="glossary query language acronyms soql sosl vlsq selectivity">
+      <div class="ch ch-grey">Query &amp; Selectivity</div>
+      <div class="cb">
+        <table class="tbl">
+          <tbody>
+            <tr><td class="bf mono">SOQL</td><td>Salesforce Object Query Language. SQL-like, single-object-rooted, sharing-aware.</td></tr>
+            <tr><td class="bf mono">SOSL</td><td>Salesforce Object Search Language. Index-backed full-text search across multiple objects. <a class="rref" href="#r13" onclick="navTo('r13');return false;">&sect;13</a></td></tr>
+            <tr><td class="bf mono">VLSQ</td><td>Very Large SOQL Queries. Salesforce's term for the chunk-and-iterate pattern for &gt; 50K-row results inside Apex.</td></tr>
+            <tr><td class="bf mono">DML</td><td>Data Manipulation Language. Insert/update/upsert/delete operations.</td></tr>
+            <tr><td class="bf mono">PK</td><td>Primary Key &mdash; "PK Chunking" in Bulk API splits a query into 18-character-Id ranges for parallelism. <a class="rref" href="#r23" onclick="navTo('r23');return false;">&sect;23</a></td></tr>
+            <tr><td class="bf mono">DRAES</td><td>Designing Record Access for Enterprise Scale. Salesforce's official sharing/visibility architecture guide. <a class="rref" href="#r34" onclick="navTo('r34');return false;">&sect;34</a></td></tr>
+            <tr><td class="bf mono">RT</td><td>Record Type. Common selectivity lever (the standard index on RecordTypeId).</td></tr>
+            <tr><td class="bf mono">OWD</td><td>Organization-Wide Defaults. The base sharing posture for an object (Public Read/Write, Private, etc.).</td></tr>
+            <tr><td class="bf mono">FLS</td><td>Field-Level Security. Per-field access; intersects with profile/permission set assignments.</td></tr>
+            <tr><td class="bf mono">CRUD</td><td>Create / Read / Update / Delete &mdash; per-object permissions.</td></tr>
+            <tr><td class="bf mono">Cardinality</td><td>The number of distinct values in a field, or rows the optimizer estimates a plan returns. <a class="rref" href="#r30" onclick="navTo('r30');return false;">&sect;30</a></td></tr>
+            <tr><td class="bf mono">Skew</td><td>Disproportionate concentration of children records under a single parent / owner / lookup value. <a class="rref" href="#r22" onclick="navTo('r22');return false;">&sect;22</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" data-search="glossary editions licenses ee ue de hyperforce shield em add on">
+      <div class="ch ch-grey">Editions, Licenses &amp; Infrastructure</div>
+      <div class="cb">
+        <table class="tbl">
+          <tbody>
+            <tr><td class="bf mono">EE</td><td>Enterprise Edition. The most common LDV-relevant edition.</td></tr>
+            <tr><td class="bf mono">UE</td><td>Unlimited Edition. Includes more storage, sandbox copies, and bundled features.</td></tr>
+            <tr><td class="bf mono">PE</td><td>Performance Edition. Sales/Service Cloud + Einstein/AgentForce bundles.</td></tr>
+            <tr><td class="bf mono">DE</td><td>Developer Edition. Free, capped, for developers.</td></tr>
+            <tr><td class="bf mono">Shield</td><td>Add-on bundle: Platform Encryption + REM + Field Audit Trail.</td></tr>
+            <tr><td class="bf mono">EM Add-on</td><td>Event Monitoring add-on; the cheaper, ELF-only subset of Shield.</td></tr>
+            <tr><td class="bf mono">Hyperforce</td><td>Salesforce's public-cloud (AWS) infrastructure tier; underlies ELO, newer Bulk API behavior, and other "modern surface" features.</td></tr>
+            <tr><td class="bf mono">Apex Guru</td><td>AI-driven Apex/SOQL recommendations from prod traces. <a class="rref" href="#r30b" onclick="navTo('r30b');return false;">&sect;30b</a></td></tr>
+            <tr><td class="bf mono">Scale Center</td><td>Org-level performance dashboard. <a class="rref" href="#r30b" onclick="navTo('r30b');return false;">&sect;30b</a></td></tr>
+            <tr><td class="bf mono">Scale Test</td><td>Sandbox-based load-testing framework. <a class="rref" href="#r30b" onclick="navTo('r30b');return false;">&sect;30b</a></td></tr>
+            <tr><td class="bf mono">LWC</td><td>Lightning Web Components. The modern (post-Aura) frontend component model.</td></tr>
+            <tr><td class="bf mono">VF</td><td>Visualforce. The legacy server-rendered UI framework.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" data-search="glossary architecture lifecycle big objects external salesforce connect data cloud">
+      <div class="ch ch-grey">Architecture &amp; Data Lifecycle</div>
+      <div class="cb">
+        <table class="tbl">
+          <tbody>
+            <tr><td class="bf mono">Big Object</td><td>A high-volume Salesforce object designed for billion-row scale; SOQL-restricted (only its index fields). <a class="rref" href="#r27" onclick="navTo('r27');return false;">&sect;27</a></td></tr>
+            <tr><td class="bf mono">External Object</td><td>An object whose data lives outside Salesforce, exposed via Salesforce Connect (typically OData). <a class="rref" href="#r27" onclick="navTo('r27');return false;">&sect;27</a></td></tr>
+            <tr><td class="bf mono">Skinny Table</td><td>A Support-deployed denormalized read-only mirror of a hot subset of fields, used to short-circuit slow joins. <a class="rref" href="#r26" onclick="navTo('r26');return false;">&sect;26</a></td></tr>
+            <tr><td class="bf mono">External ID</td><td>A custom field marked unique &amp; indexed for cross-system identity / upsert. Default cap of 6 per object. <a class="rref" href="#r26" onclick="navTo('r26');return false;">&sect;26</a></td></tr>
+            <tr><td class="bf mono">Data Cloud / Data 360</td><td>Salesforce's data lakehouse; the right place for warehouse-scale historical / aggregated data. <a class="rref" href="#r07" onclick="navTo('r07');return false;">&sect;07</a></td></tr>
+            <tr><td class="bf mono">Heroku Connect</td><td>Bidirectional Salesforce &harr; Postgres synchronization, often used as a virtualization tier.</td></tr>
+            <tr><td class="bf mono">Continuation</td><td>An Apex async pattern for long-running callouts that would exceed the request timeout. <a class="rref" href="#r28" onclick="navTo('r28');return false;">&sect;28</a></td></tr>
+            <tr><td class="bf mono">Defer Sharing</td><td>A Support-enabled mode that pauses sharing recalculation during bulk loads / role reorgs. <a class="rref" href="#r24" onclick="navTo('r24');return false;">&sect;24</a></td></tr>
+            <tr><td class="bf mono">Granular Locking</td><td>A Support-enabled mode that reduces the lock footprint of group-membership operations. <a class="rref" href="#r24" onclick="navTo('r24');return false;">&sect;24</a></td></tr>
+            <tr><td class="bf mono">UTLR</td><td><span class="mono">UNABLE_TO_LOCK_ROW</span> &mdash; the row-lock-conflict exception. <a class="rref" href="#r21" onclick="navTo('r21');return false;">&sect;21</a></td></tr>
+            <tr><td class="bf mono">QTO</td><td><span class="mono">QUERY_TIMEOUT</span> &mdash; the 120-second SOQL timeout exception.</td></tr>
+            <tr><td class="bf mono">Hot / Cold</td><td>Active-vs-archived data classification. Hot stays in the CRM; cold goes to Big Object / external / Data Cloud. <a class="rref" href="#r27" onclick="navTo('r27');return false;">&sect;27</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
 </div>
 </div>
 
