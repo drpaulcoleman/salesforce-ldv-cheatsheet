@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <!--
   Salesforce(R) Large Data Volumes (LDV) Architect Cheatsheet
-  Version: V0.0.1 (PRE-DRAFT)
-  Last Modified: 2026-04-30
+  Version: V0.0.2 (PRE-DRAFT)
+  Last Modified: 2026-05-01
   Copyright (c) 2026 Dr. Paul Coleman. All rights reserved.
 
   INDEPENDENT, UNOFFICIAL technical reference distilled from publicly
@@ -18,7 +18,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Salesforce(R) LDV Architect Cheatsheet &mdash; V0.0.1 PRE-DRAFT</title>
+<title>Salesforce(R) LDV Architect Cheatsheet &mdash; V0.0.2 PRE-DRAFT</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { width: 100%; height: 100%; overflow: hidden;
@@ -393,7 +393,7 @@ code, kbd, pre, samp, .mono, .tbl .mono, .tbl td.numcell,
   font-size: 11.5px; color: #5B7BA5;
   margin-top: 10px; font-style: italic;
 }
-.figure svg { display: block; max-width: 100%; height: auto; margin: 0 auto; }
+.figure svg { display: block; width: 100%; max-width: 1100px; height: auto; margin: 0 auto; }
 .figure svg text { font-family: 'Source Code Pro','Cascadia Code',monospace; }
 .figure svg .lbl  { fill:#B0C4DE; }
 .figure svg .lbl-em { fill:#FFFFFF; font-weight:700; }
@@ -440,13 +440,13 @@ ol.bullet li::before {
   </div>
   <div id="hdr-title">
     <h1>Salesforce&reg; Large Data Volumes &mdash; Architect Cheatsheet
-      <span class="vbadge">V0.0.1</span>
+      <span class="vbadge">V0.0.2</span>
       <span class="draft-badge">PRE-DRAFT</span>
     </h1>
-    <p>Last Modified 2026-APR-30 &middot; &copy; 2026 Dr. Paul Coleman &middot; Unofficial Reference</p>
+    <p>Last Modified 2026-MAY-01 &middot; &copy; 2026 Dr. Paul Coleman &middot; Unofficial Reference</p>
   </div>
   <div id="hdr-stats">
-    <div class="st"><div class="st-dot" style="background:#0070D2"></div><span class="st-v">31</span>&nbsp;Regions</div>
+    <div class="st"><div class="st-dot" style="background:#0070D2"></div><span class="st-v">35</span>&nbsp;Regions</div>
     <div class="st"><div class="st-dot" style="background:#FF9A3C"></div><span class="st-v">40+</span>&nbsp;Thresholds</div>
     <div class="st"><div class="st-dot" style="background:#C23934"></div><span class="st-v">25+</span>&nbsp;Anti-Patterns</div>
     <div class="st"><div class="st-dot" style="background:#9050E9"></div><span class="st-v">7</span>&nbsp;Support Asks</div>
@@ -457,7 +457,7 @@ ol.bullet li::before {
 
 <div id="sidebar">
   <div class="nav-disclaimer">
-    <strong>&#9888; Pre-Draft V0.0.1</strong>
+    <strong>&#9888; Pre-Draft V0.0.2</strong>
     Authored with AI assistance. Verify every threshold against current
     Salesforce release notes before production use.
   </div>
@@ -509,6 +509,7 @@ ol.bullet li::before {
   <div class="nav-sec">Diagnostics &amp; Monitoring</div>
   <div class="nav-item" onclick="navTo('r29')"><div class="nav-dot" style="background:#9050E9"></div><span class="nav-num">29</span>Shield Real-Time Event Monitoring</div>
   <div class="nav-item" onclick="navTo('r30')"><div class="nav-dot" style="background:#79C0FF"></div><span class="nav-num">30</span>Optimizer App, Query Plan, ELO</div>
+  <div class="nav-item" onclick="navTo('r30b')"><div class="nav-dot" style="background:#9050E9"></div><span class="nav-num">30b</span>Scale Center, Scale Test, Apex Guru</div>
 
   <div class="nav-sec">Escalation &amp; AI</div>
   <div class="nav-item" onclick="navTo('r31')"><div class="nav-dot" style="background:#c9a0ff"></div><span class="nav-num">31</span>When To Contact Salesforce Support</div>
@@ -836,20 +837,20 @@ ol.bullet li::before {
   <table class="tbl">
     <thead><tr><th>#</th><th>Offender</th><th>Symptom</th><th>Fix</th></tr></thead>
     <tbody>
-      <tr><td class="numcell">1</td><td class="bf">"All Accounts" or "All Open Cases" list view as a default</td><td>Page TTI &gt; 30s</td><td>Indexed filter (OwnerId/RecordType/CreatedDate) &mdash; <a class="rref" href="#r09" onclick="navTo('r09');return false;">&sect;09</a></td></tr>
-      <tr><td class="numcell">2</td><td class="bf">All inbound integration records owned by ONE "Integration User"</td><td>Sharing recalc storms; <span class="mono">UNABLE_TO_LOCK_ROW</span></td><td>Use role-less users / pool integration users &mdash; <a class="rref" href="#r22" onclick="navTo('r22');return false;">&sect;22</a></td></tr>
-      <tr><td class="numcell">3</td><td class="bf">"Default Account" / "Walk-In Customer" with millions of contacts</td><td>Account skew, parent locks</td><td>Bucket across N dummy accounts &mdash; <a class="rref" href="#r22" onclick="navTo('r22');return false;">&sect;22</a></td></tr>
-      <tr><td class="numcell">4</td><td class="bf">7+ years of closed Cases / completed Tasks kept hot</td><td>Slow reports, fat sandboxes, dim Optimizer</td><td>Big Object archive policy &mdash; <a class="rref" href="#r27" onclick="navTo('r27');return false;">&sect;27</a></td></tr>
-      <tr><td class="numcell">5</td><td class="bf">Process Builder on a 50M-row object</td><td>Random save delays, transaction timeouts</td><td>Migrate to Flow / Apex; bypass during loads &mdash; <a class="rref" href="#r05" onclick="navTo('r05');return false;">&sect;05</a></td></tr>
-      <tr><td class="numcell">6</td><td class="bf">Roll-up summary on a hot Account from a 10M-row child</td><td>Every child write locks Account</td><td>Replace with scheduled Apex aggregation &mdash; <a class="rref" href="#r05" onclick="navTo('r05');return false;">&sect;05</a></td></tr>
-      <tr><td class="numcell">7</td><td class="bf">Every integration system shares ONE OAuth session</td><td>"Too many cursors", random fails</td><td>One integration user per system &mdash; <a class="rref" href="#r06" onclick="navTo('r06');return false;">&sect;06</a></td></tr>
-      <tr><td class="numcell">8</td><td class="bf"><span class="mono">SELECT ... FROM Big_Obj__c LIMIT 1000 OFFSET 50000</span></td><td><span class="mono">NUMBER_OUTSIDE_VALID_RANGE</span></td><td>Keyset pagination &mdash; <a class="rref" href="#r16" onclick="navTo('r16');return false;">&sect;16</a></td></tr>
-      <tr><td class="numcell">9</td><td class="bf">Bulk API insert NOT grouped by parent</td><td>Lock contention storms</td><td>Group by ParentId; serial mode &mdash; <a class="rref" href="#r23" onclick="navTo('r23');return false;">&sect;23</a></td></tr>
-      <tr><td class="numcell">10</td><td class="bf">Custom lookup with "Don't Allow Deletion" &mdash; 80% point at one row</td><td>Lookup skew, parent locks</td><td>Switch to "Clear the value" &mdash; <a class="rref" href="#r22" onclick="navTo('r22');return false;">&sect;22</a></td></tr>
-      <tr><td class="numcell">11</td><td class="bf">Triggers issuing SOQL or DML inside a <span class="mono">for</span> loop</td><td>Governor limit blow-out</td><td>Bulkify with Sets/Maps &mdash; <a class="rref" href="#r05" onclick="navTo('r05');return false;">&sect;05</a></td></tr>
-      <tr><td class="numcell">12</td><td class="bf">Apex code that retries SOQL until governor limits reset</td><td>"Around the limits" anti-pattern</td><td>Refactor; do not code around governors</td></tr>
-      <tr><td class="numcell">13</td><td class="bf">Scheduled Apex doing what Reporting Snapshots / CRM Analytics could</td><td>Custom code re-implements OOTB</td><td>OOTB-first; see callout below</td></tr>
-      <tr><td class="numcell">14</td><td class="bf">"Just an FYI" emails sent from triggers via single-record DML</td><td>Hits API limits, slows save</td><td>Send via Platform Events + queue</td></tr>
+      <tr><td class="numcell">1</td><td class="bf">SOQL with multi-field <span class="mono">OR</span> / <span class="mono">LIKE '%term%'</span> across text columns instead of SOSL</td><td>Index-defeating; full table scan; query non-selective on LDV objects</td><td>Use SOSL (<span class="mono">FIND</span>) for full-text / multi-object search &mdash; <a class="rref" href="#r13" onclick="navTo('r13');return false;">&sect;13</a> / <a class="rref" href="#r14" onclick="navTo('r14');return false;">&sect;14</a></td></tr>
+      <tr><td class="numcell">2</td><td class="bf">Formula fields used in <span class="mono">WHERE</span> filter expressions (especially cross-object)</td><td>Standard &amp; custom indexes can't be used; selectivity collapses</td><td>Persist value as a real (indexable) field via Flow/Apex; reserve formulas for display &mdash; <a class="rref" href="#r10" onclick="navTo('r10');return false;">&sect;10</a></td></tr>
+      <tr><td class="numcell">3</td><td class="bf">Negative / null filter comparators &mdash; <span class="mono">!=</span>, <span class="mono">&lt;&gt;</span>, <span class="mono">NOT IN</span>, <span class="mono">NOT LIKE</span>, <span class="mono">EXCLUDES</span>, <span class="mono">!= NULL</span> / <span class="mono">= NULL</span></td><td>Index unusable &mdash; optimizer must scan; query non-selective at LDV</td><td>Rewrite as positive / inclusive predicate; add boolean "has-value" flag if null-checks are hot &mdash; <a class="rref" href="#r10" onclick="navTo('r10');return false;">&sect;10</a></td></tr>
+      <tr><td class="numcell">4</td><td class="bf">"All Accounts" or "All Open Cases" list view as a default</td><td>Page TTI &gt; 30s</td><td>Indexed filter (OwnerId/RecordType/CreatedDate) &mdash; <a class="rref" href="#r09" onclick="navTo('r09');return false;">&sect;09</a></td></tr>
+      <tr><td class="numcell">5</td><td class="bf">All inbound integration records owned by ONE "Integration User"</td><td>Sharing recalc storms; <span class="mono">UNABLE_TO_LOCK_ROW</span></td><td>Use role-less users / pool integration users &mdash; <a class="rref" href="#r22" onclick="navTo('r22');return false;">&sect;22</a></td></tr>
+      <tr><td class="numcell">6</td><td class="bf">"Default Account" / "Walk-In Customer" with millions of contacts</td><td>Account skew, parent locks</td><td>Bucket across N dummy accounts &mdash; <a class="rref" href="#r22" onclick="navTo('r22');return false;">&sect;22</a></td></tr>
+      <tr><td class="numcell">7</td><td class="bf">7+ years of closed Cases / completed Tasks kept hot</td><td>Slow reports, fat sandboxes, dim Optimizer</td><td>Big Object archive policy &mdash; <a class="rref" href="#r27" onclick="navTo('r27');return false;">&sect;27</a></td></tr>
+      <tr><td class="numcell">8</td><td class="bf">Process Builder on a 50M-row object</td><td>Random save delays, transaction timeouts</td><td>Migrate to Flow / Apex; bypass during loads &mdash; <a class="rref" href="#r05" onclick="navTo('r05');return false;">&sect;05</a></td></tr>
+      <tr><td class="numcell">9</td><td class="bf">Roll-up summary on a hot Account from a 10M-row child</td><td>Every child write locks Account</td><td>Replace with scheduled Apex aggregation &mdash; <a class="rref" href="#r05" onclick="navTo('r05');return false;">&sect;05</a></td></tr>
+      <tr><td class="numcell">10</td><td class="bf">Every integration system shares ONE OAuth session</td><td>"Too many cursors", random fails</td><td>One integration user per system &mdash; <a class="rref" href="#r06" onclick="navTo('r06');return false;">&sect;06</a></td></tr>
+      <tr><td class="numcell">11</td><td class="bf"><span class="mono">SELECT ... FROM Big_Obj__c LIMIT 1000 OFFSET 50000</span></td><td><span class="mono">NUMBER_OUTSIDE_VALID_RANGE</span></td><td>Keyset pagination &mdash; <a class="rref" href="#r16" onclick="navTo('r16');return false;">&sect;16</a></td></tr>
+      <tr><td class="numcell">12</td><td class="bf">Bulk API insert NOT grouped by parent</td><td>Lock contention storms</td><td>Group by ParentId; serial mode &mdash; <a class="rref" href="#r23" onclick="navTo('r23');return false;">&sect;23</a></td></tr>
+      <tr><td class="numcell">13</td><td class="bf">Custom lookup with "Don't Allow Deletion" &mdash; 80% point at one row</td><td>Lookup skew, parent locks</td><td>Switch to "Clear the value" &mdash; <a class="rref" href="#r22" onclick="navTo('r22');return false;">&sect;22</a></td></tr>
+      <tr><td class="numcell">14</td><td class="bf">Triggers issuing SOQL or DML inside a <span class="mono">for</span> loop</td><td>Governor limit blow-out</td><td>Bulkify with Sets/Maps &mdash; <a class="rref" href="#r05" onclick="navTo('r05');return false;">&sect;05</a></td></tr>
       <tr><td class="numcell">15</td><td class="bf">Sandbox refresh pulls 200M rows of marketing event log</td><td>Refresh fails or takes a week</td><td>Archive the log; refresh hot data only &mdash; <a class="rref" href="#r27" onclick="navTo('r27');return false;">&sect;27</a></td></tr>
     </tbody>
   </table>
@@ -974,26 +975,27 @@ ol.bullet li::before {
     <div class="card warn" data-search="database cursor api cursor open limit shared session integration user querylocator querymore">
       <div class="ch ch-amber">&#128274; Open <span class="bold">Database Cursors</span> &mdash; the Integration-User Gotcha</div>
       <div class="cb">
-        <div class="text-sm mb-6">A <span class="bold">database cursor</span> is a server-side handle the platform allocates to track an in-progress query result set so the client can fetch additional pages. Every <span class="mono">queryLocator</span> (SOAP), <span class="mono">queryMore</span> (REST), Bulk API 2.0 query result, and Apex SOQL Cursor (Spring '24+) holds an open database cursor until it's exhausted, explicitly closed, or times out. Salesforce caps how many can be open <span class="bold">per user, per org</span>.</div>
+        <div class="text-sm mb-6">A <span class="bold">database cursor</span> is a server-side handle the platform allocates to track an in-progress query result set so the client can fetch additional pages. SOAP <span class="mono">queryLocator</span> (paged via <span class="mono">queryMore()</span>), REST query pagination (paged via <span class="mono">nextRecordsUrl</span>), Bulk API 2.0 query result sets, and Apex Cursors (<span class="mono">Database.getCursor()</span>, Spring '24+) each hold an open server-side cursor until it's <span class="bold">consumed to completion</span> or <span class="bold">times out</span>. None of these surfaces expose an explicit client-side close API &mdash; lifecycle is managed by exhaustion or expiration. Salesforce caps how many can be open <span class="bold">per user, per org</span>.</div>
         <div class="info-box"><strong>Approximate caps</strong> (verify against current docs):</div>
         <ul class="bullet">
-          <li>Per user, per org: <span class="bold">~10 open database cursors</span> across SOAP <span class="mono">queryLocator</span> + REST <span class="mono">queryMore</span> + Bulk API result sets</li>
-          <li>Apex Cursors (<span class="mono">Database.getCursor()</span>, Spring '24+): per-transaction limits, separate budget</li>
-          <li>Default cursor lifetime before automatic cleanup: <span class="bold">~15 minutes</span></li>
+          <li>Per user, per org: <span class="bold">~10 open database cursors</span> across SOAP <span class="mono">queryLocator</span> + REST query pagination + Bulk API result sets</li>
+          <li>Apex Cursors (<span class="mono">Database.getCursor()</span>, Spring '24+) and Pagination Cursors share these per-user expiration limits with API Query cursors; per-transaction and per-day instance budgets are separate (see <span class="mono">Limits.getApexCursors()</span>, <span class="mono">Limits.getApexPaginationCursors()</span>)</li>
+          <li>Default cursor lifetime before automatic cleanup: <span class="bold">~15 minutes</span> idle</li>
         </ul>
         <div class="danger-box mt-8"><strong>The architecture trap:</strong> When five services all integrate via <span class="bold">one shared "Integration User"</span> sharing a session token, they share the same per-user database-cursor pool. Service #6 to start a Bulk query gets <span class="mono">"Too many query cursors open"</span>. Symptoms appear "randomly" in production because the failure depends on whether other services happen to be mid-paginate at the same time.</div>
         <div class="csec mt-8 text-green">Mitigation</div>
         <ul class="bullet">
           <li class="good"><span class="bold">One integration user per integrating system</span> &mdash; preserves identity attribution AND each system gets its own database-cursor budget</li>
           <li class="good">For high-fan-out integrations: a pool of integration users, modulo on system-id, so cursor pressure is sharded</li>
-          <li class="good">Close cursors promptly after consumption (don't leak by abandoning <span class="mono">queryLocator</span> handles)</li>
+          <li class="good"><span class="bold">Consume to completion</span> &mdash; iterate <span class="mono">queryMore()</span> / follow <span class="mono">nextRecordsUrl</span> until done; don't abandon partial result sets and wait on the 15-minute idle timeout to free the cursor</li>
           <li class="good">Monitor via Event Log (<span class="mono">BulkApiResultEvent</span>, <span class="mono">ApiEvent</span>) for cursor lifecycle &mdash; correlate slow queries with cursor allocation</li>
-          <li class="good">For Apex SOQL Cursors specifically: always release with <span class="mono">cursor.close()</span> in a <span class="kw">finally</span> block</li>
+          <li class="good">For Apex Cursors: cursors are <span class="bold">stateless</span> and platform-managed &mdash; there is no <span class="mono">close()</span> method. Track <span class="mono">Cursor.fetch(position, count)</span> offsets yourself; the cursor is released by exhaustion or expiration</li>
         </ul>
         <div class="text-xs mt-6"><span class="text-muted">References:</span> &nbsp;
           <a href="https://developer.salesforce.com/docs/atlas.en-us.salesforce_app_limits_cheatsheet.meta/salesforce_app_limits_cheatsheet/salesforce_app_limits_platform_apicursors.htm" target="_blank">API Query Cursor Limits</a> &middot;
           <a href="https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_calls_query_querylocator.htm" target="_blank">SOAP API / queryLocator</a> &middot;
-          <a href="https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_class_System_Cursor.htm" target="_blank">Apex Reference / Database.Cursor</a>
+          <a href="https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_cursors.htm" target="_blank">Apex Developer Guide / Apex Cursors</a> &middot;
+          <a href="https://developer.salesforce.com/docs/atlas.en-us.apexref.meta/apexref/apex_class_Database_Cursor.htm" target="_blank">Apex Reference / Database.Cursor</a>
         </div>
       </div>
     </div>
@@ -4022,6 +4024,134 @@ Notes: <span class="ok">Index</span></pre>
 
 
 <!-- ════════════════════════════════════════════════════════════════════
+     REGION 27b — SCALE CENTER, SCALE TEST, APEX GURU, LIGHTNING USAGE
+     The OOTB performance-observability stack that supplements Shield REM.
+════════════════════════════════════════════════════════════════════════ -->
+<div id="r30b" class="region r-shield" style="left:40px;top:18000px;width:4420px;height:1100px;">
+<div class="rh">30b &mdash; Scale Center, Scale Test, Apex Guru, Lightning Usage &mdash; The OOTB Performance Stack</div>
+<div class="rb">
+
+  <div class="shield-box mb-12"><strong>Where this fits:</strong> Shield REM (<a class="rref" href="#r29" onclick="navTo('r29');return false;">&sect;29</a>) is the raw event firehose; Query Plan (<a class="rref" href="#r30" onclick="navTo('r30');return false;">&sect;30</a>) is the per-query microscope. This region is what sits <span class="bold">in between</span> &mdash; Salesforce's curated, OOTB observability surfaces that read those same signals and hand you trends, summaries, and AI-prioritized recommendations without writing a single Pub/Sub subscriber.</div>
+
+  <div class="grid-2 gap-12">
+
+    <div class="card" data-search="scale center setup performance ept long running transactions sharing recalc async">
+      <div class="ch ch-shield">A &middot; Scale Center &mdash; Org-Level Performance Dashboard <span class="badge b-modern" style="margin-left:auto">GA</span></div>
+      <div class="cb">
+        <div class="csec">What It Is</div>
+        <div class="text-sm mb-6">Setup &rarr; <span class="mono">Scale Center</span>. The single-pane operational health surface for an LDV org. Replaces the older "Performance Assistant" workflow with live trend charts, drill-down to root cause, and an actionable recommendations panel.</div>
+        <div class="csec">What It Surfaces</div>
+        <ul class="bullet">
+          <li><span class="bold">EPT (Experienced Page Time)</span> trends, percentiles (p50 / p95 / p99)</li>
+          <li><span class="bold">Top long-running transactions</span> &mdash; ranked by elapsed-time impact</li>
+          <li><span class="bold">Async job throughput</span> &mdash; Batch / Queueable / Scheduled queue depth</li>
+          <li><span class="bold">Sharing-recalc backlog</span> &mdash; the silent killer of role reorgs</li>
+          <li><span class="bold">CPU governor saturation</span> &mdash; concurrent-Apex-limit pressure (<a class="rref" href="#r06" onclick="navTo('r06');return false;">&sect;6</a>)</li>
+          <li><span class="bold">SOQL latency distribution</span> by object &mdash; LDV-object hot-spotting</li>
+        </ul>
+        <div class="csec mt-6">License &amp; Cadence</div>
+        <ul class="bullet">
+          <li class="good">Free for Performance / Unlimited; metered access on EE</li>
+          <li class="good">Refreshed near-real-time (5&ndash;15 min lag, generally)</li>
+          <li class="good">No sandbox limits; works in prod immediately</li>
+        </ul>
+        <div class="tip-box mt-6"><strong>Operational ritual:</strong> review weekly during steady state; daily after a major release; before/after every LDV migration. The trend deltas (not the absolute numbers) tell you whether your changes helped or hurt.</div>
+      </div>
+    </div>
+
+    <div class="card" data-search="lightning usage app ept browser device performance lex page time">
+      <div class="ch ch-shield">B &middot; Lightning Usage App &mdash; UX Performance Trends <span class="badge b-low" style="margin-left:auto">FREE</span></div>
+      <div class="cb">
+        <div class="csec">What It Is</div>
+        <div class="text-sm mb-6">Setup &rarr; <span class="mono">Lightning Usage</span>. Free in all editions; longer-tenured than Scale Center but consistently underused by architects who associate it with "adoption metrics."</div>
+        <div class="csec">What It Surfaces</div>
+        <ul class="bullet">
+          <li><span class="bold">EPT distribution per page</span> &mdash; the bimodal "fast for some, terrible for power users" pattern shows up here first</li>
+          <li><span class="bold">Browser / OS / device breakdown</span> &mdash; some LDV pages are slow only on Safari, only on iOS, etc.</li>
+          <li><span class="bold">Unsupported-browser usage</span> &mdash; users on EOL Edge/Chrome get worse perf; surface them before they call</li>
+          <li><span class="bold">Adoption per page</span> &mdash; if no one uses the page, don't tune it</li>
+          <li><span class="bold">Custom Lightning Page perf</span> &mdash; isolates LDV-impacted custom pages from standard ones</li>
+        </ul>
+        <div class="csec mt-6">When To Reach For It</div>
+        <ul class="bullet">
+          <li class="good">"My users say page X is slow" &mdash; before chasing Apex/SOQL, check whether it's actually slow</li>
+          <li class="good">Quarterly UX health check pairs with Optimizer App's metadata sweep</li>
+          <li class="good">Validating an Aura &rarr; LWC migration impact</li>
+        </ul>
+        <div class="tip-box mt-6"><strong>Hidden gem:</strong> compare EPT trend before vs after enabling a new feature flag &mdash; the regression appears here in days, long before users complain.</div>
+      </div>
+    </div>
+
+    <div class="card" data-search="scale test full sandbox load testing pre prod synthetic traffic salesforce engagement">
+      <div class="ch ch-shield">C &middot; Scale Test &mdash; Pre-Prod Load Simulation <span class="badge b-med" style="margin-left:auto">FULL SANDBOX</span></div>
+      <div class="cb">
+        <div class="csec">What It Is</div>
+        <div class="text-sm mb-6">Salesforce's sanctioned framework for <span class="bold">simulating production-scale load</span> against a Full Sandbox <span class="bold">before</span> a cutover. The only supported path &mdash; rolling-your-own with JMeter or k6 against a sandbox can violate the Acceptable Use Policy and trip rate limiters.</div>
+        <div class="csec">What It Tests</div>
+        <ul class="bullet">
+          <li><span class="bold">API throughput</span> at integration-level concurrency</li>
+          <li><span class="bold">Page-load latency</span> under realistic user counts</li>
+          <li><span class="bold">Bulk job pipeline</span> &mdash; can the org keep up with the new daily volume?</li>
+          <li><span class="bold">Sharing-recalc behavior</span> under simultaneous bulk + interactive load</li>
+          <li><span class="bold">Lock-contention envelope</span> &mdash; does <span class="mono">UNABLE_TO_LOCK_ROW</span> appear at projected scale? (<a class="rref" href="#r21" onclick="navTo('r21');return false;">&sect;21</a>)</li>
+        </ul>
+        <div class="csec mt-6">When To Run It</div>
+        <ul class="bullet">
+          <li class="good"><span class="bold">Before</span> migrating an LDV object to a new schema / index strategy</li>
+          <li class="good"><span class="bold">Before</span> enabling Defer Sharing Calc on prod (<a class="rref" href="#r24" onclick="navTo('r24');return false;">&sect;24</a>)</li>
+          <li class="good"><span class="bold">Before</span> doubling a B2B customer's transaction throughput</li>
+          <li class="warn">Requires Full Sandbox refresh; sometimes requires Salesforce engagement</li>
+        </ul>
+        <div class="warn-box mt-6"><strong>Don't skip it for "we'll watch carefully on cutover."</strong> The lock contention and sharing-storm classes of regression are nearly impossible to reverse in flight; a Scale Test rehearsal is cheaper than a Sev-1 rollback.</div>
+      </div>
+    </div>
+
+    <div class="card" data-search="apex guru ai recommendations slow methods soql anti patterns einstein for developers">
+      <div class="ch ch-shield">D &middot; Apex Guru &mdash; AI-Driven Apex / SOQL Recommendations <span class="badge b-ai" style="margin-left:auto">AI</span></div>
+      <div class="cb">
+        <div class="csec">What It Is</div>
+        <div class="text-sm mb-6">Setup &rarr; <span class="mono">Apex Guru</span>. GA 2024. Reads <span class="bold">your actual production execution traces</span> and surfaces ranked recommendations: slow methods, SOQL anti-patterns, expensive callouts, governor-limit hot spots. The OOTB equivalent of the AI workflows in <a class="rref" href="#r32" onclick="navTo('r32');return false;">&sect;32</a> &mdash; but on real prod data, no copy-paste required.</div>
+        <div class="csec">What It Catches</div>
+        <ul class="bullet">
+          <li><span class="bold">Unselective SOQL</span> &mdash; matches the patterns in <a class="rref" href="#r10" onclick="navTo('r10');return false;">&sect;10</a> automatically</li>
+          <li><span class="bold">Slow Apex methods</span> &mdash; ranked by total org-wide elapsed time, not just per-call</li>
+          <li><span class="bold">Inefficient loops</span> &mdash; SOQL/DML inside <span class="kw">for</span>, missing bulk patterns</li>
+          <li><span class="bold">Heap and CPU pressure</span> &mdash; classes near governor ceilings</li>
+          <li><span class="bold">Recommended fixes</span> &mdash; with diff-style code suggestions you can copy into your IDE</li>
+        </ul>
+        <div class="csec mt-6">License</div>
+        <ul class="bullet">
+          <li class="good">Performance / Unlimited (bundled with Einstein for Developers / Agentforce)</li>
+          <li class="good">No prompt-engineering needed &mdash; reads ApexExecutionEventLog under the hood</li>
+        </ul>
+        <div class="tip-box mt-6"><strong>Pair with Scale Center:</strong> Scale Center tells you <em>which</em> transaction is slow; Apex Guru tells you <em>why</em> at the line level. They cite each other &mdash; click through.</div>
+      </div>
+    </div>
+
+    <div class="card" style="grid-column: 1 / -1;" data-search="ootb diagnostic stack workflow pre prod soak operational forensic when to use">
+      <div class="ch ch-shield">&#127919; The Full OOTB Diagnostic Stack &mdash; Phase &times; Tool Matrix</div>
+      <div class="cb">
+        <table class="tbl">
+          <thead><tr><th>Phase</th><th>Goal</th><th>Primary Tool</th><th>Supplements</th></tr></thead>
+          <tbody>
+            <tr><td class="bf">Pre-Deploy</td><td>Will this query / class survive prod-shaped data?</td><td class="bf text-blue">Query Plan (<a class="rref" href="#r30" onclick="navTo('r30');return false;">&sect;30</a>)</td><td>Apex Guru on adjacent classes; Scale Test for breaking changes</td></tr>
+            <tr><td class="bf">Pre-Cutover</td><td>Will the org survive 2&times; / 5&times; / 10&times; current load?</td><td class="bf text-violet">Scale Test</td><td>Scale Center for baseline comparison</td></tr>
+            <tr><td class="bf">Post-Deploy Soak</td><td>Did anything regress in the first 24&ndash;72 hours?</td><td class="bf text-violet">Scale Center trends</td><td>Lightning Usage for UX, Apex Guru for code-level regressions</td></tr>
+            <tr><td class="bf">Steady-State Ops</td><td>What's drifting? Where's the hot spot?</td><td class="bf text-violet">Scale Center + Shield REM (<a class="rref" href="#r29" onclick="navTo('r29');return false;">&sect;29</a>)</td><td>Apex Guru weekly review; Optimizer App quarterly</td></tr>
+            <tr><td class="bf">Incident / Forensic</td><td>"User X clicked Y at 14:23 and it took 47 seconds &mdash; why?"</td><td class="bf text-violet">ELO + <span class="mono">X-SFDC-REQUEST-ID</span></td><td>Lightning Usage to confirm scope; Scale Center to confirm timing</td></tr>
+            <tr><td class="bf">Capacity Planning</td><td>"Can we onboard customer Z (3&times; record growth)?"</td><td class="bf text-violet">Scale Test in Full Sandbox</td><td>Scale Center for current saturation; archive plan from <a class="rref" href="#r27" onclick="navTo('r27');return false;">&sect;27</a></td></tr>
+          </tbody>
+        </table>
+        <div class="info-box mt-10"><strong>The investment ladder:</strong> Query Plan (free, seconds) &rarr; Apex Guru (license, minutes) &rarr; Lightning Usage + Scale Center (free/license, hours of analysis) &rarr; Scale Test (Full Sandbox + engagement, days). Climb only as far as the question requires &mdash; most LDV regressions are caught at the first two rungs.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════════
      REGION 28 — WHEN TO CONTACT SUPPORT  (40, 18280  2200x800)
 ════════════════════════════════════════════════════════════════════════ -->
 <div id="r31" class="region r-iris" style="left:40px;top:18280px;width:2200px;height:800px;">
@@ -4216,6 +4346,14 @@ Notes: <span class="ok">Index</span></pre>
       <tr><td>ELO retention (Hyperforce)</td><td class="numcell">30 days</td></tr>
       <tr><td>Daily streaming event cap</td><td class="numcell">50,000,000</td></tr>
       <tr><td>ELO Timestamp filter window</td><td class="numcell">15 days</td></tr>
+
+      <tr class="row-cat"><td colspan="2">OOTB Performance Stack (R30b)</td></tr>
+      <tr><td>Scale Center refresh lag</td><td class="numcell">5&ndash;15 min</td></tr>
+      <tr><td>Scale Center license tier</td><td class="numcell">Perf / UE free</td></tr>
+      <tr><td>Lightning Usage App license</td><td class="numcell">all editions</td></tr>
+      <tr><td>Scale Test environment</td><td class="numcell">Full Sandbox</td></tr>
+      <tr><td>Apex Guru license tier</td><td class="numcell">Perf / UE</td></tr>
+      <tr><td>Apex Guru data source</td><td class="numcell">prod traces</td></tr>
     </tbody>
   </table>
 
@@ -4289,6 +4427,13 @@ Notes: <span class="ok">Index</span></pre>
       <tr><td>EventLogFile reference</td><td><a href="https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_objects_eventlogfile.htm" target="_blank">EventLogFile</a></td></tr>
       <tr><td>Concurrent Long-Running Apex Event</td><td><a href="https://developer.salesforce.com/docs/atlas.en-us.object_reference.meta/object_reference/sforce_api_objects_eventlogfile_concurrentlongrunningapexlimit.htm" target="_blank">ConcurrentLongRunningApexLimit Event</a></td></tr>
       <tr><td>Salesforce Optimizer App</td><td><a href="https://help.salesforce.com/s/articleView?id=xcloud.optimizer_introduction.htm&amp;type=5" target="_blank">Optimizer App</a></td></tr>
+
+      <tr class="row-cat"><td colspan="2">OOTB Performance Stack (R30b)</td></tr>
+      <tr><td>Scale Center (Help)</td><td><a href="https://help.salesforce.com/s/articleView?id=sf.scale_center.htm&amp;type=5" target="_blank">Help / Scale Center</a></td></tr>
+      <tr><td>Scale Test (Help)</td><td><a href="https://help.salesforce.com/s/articleView?id=sf.scale_test.htm&amp;type=5" target="_blank">Help / Scale Test</a></td></tr>
+      <tr><td>Apex Guru (Help)</td><td><a href="https://help.salesforce.com/s/articleView?id=sf.apexguru_overview.htm&amp;type=5" target="_blank">Help / Apex Guru</a></td></tr>
+      <tr><td>Apex Guru REST API</td><td><a href="https://developer.salesforce.com/docs/platform/apex-guru/guide/get-started.html" target="_blank">Dev / Apex Guru API</a></td></tr>
+      <tr><td>Lightning Usage App</td><td><a href="https://help.salesforce.com/s/articleView?id=sf.lightning_usage.htm&amp;type=5" target="_blank">Help / Lightning Usage</a></td></tr>
 
       <tr class="row-cat"><td colspan="2">Data Cloud / Data 360</td></tr>
       <tr><td>Data Cloud (Data 360) docs</td><td><a href="https://help.salesforce.com/s/articleView?id=sf.c360_a_data_cloud.htm&amp;type=5" target="_blank">Data Cloud Help</a></td></tr>
