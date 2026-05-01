@@ -1,0 +1,5 @@
+# Reference source materials — not part of the published cheatsheet
+docs/
+
+# Salesforce CLI workspace state — not part of the published cheatsheet
+.sfdx/
