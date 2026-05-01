@@ -1923,8 +1923,9 @@ fields                =  [MyField__c]</pre>
       <tr><td class="bf">Substring "contains"</td><td class="high">Anti-pattern (<span class="mono">LIKE '%x%'</span>)</td><td class="low">Native, fast</td></tr>
       <tr><td class="bf">Tokenized matches</td><td class="high">No</td><td class="low">"Acme" finds "Acme Corp"</td></tr>
       <tr><td class="bf">Aggregations / counts</td><td class="low">Yes</td><td class="high">No</td></tr>
-      <tr><td class="bf">Filter on numeric / date / boolean</td><td class="low">Yes</td><td class="med">Limited (mainly via <span class="mono">RETURNING ... WHERE</span>)</td></tr>
-      <tr><td class="bf">Sorting in query</td><td class="low">Yes (<span class="mono">ORDER BY</span>)</td><td class="med">Limited</td></tr>
+      <tr><td class="bf">Filter on numeric / date / boolean</td><td class="low">Yes (top-level <span class="mono">WHERE</span>)</td><td class="low">Yes &mdash; full <span class="mono">WHERE</span> inside <span class="mono">RETURNING(field, ... WHERE ...)</span>, same operators as SOQL, accepts Apex bind variables</td></tr>
+      <tr><td class="bf">Sorting / pagination in query</td><td class="low">Yes (<span class="mono">ORDER BY</span>, <span class="mono">LIMIT</span>, <span class="mono">OFFSET</span>)</td><td class="low">Yes &mdash; <span class="mono">ORDER BY</span>, <span class="mono">LIMIT</span>, <span class="mono">OFFSET</span> per object inside <span class="mono">RETURNING(...)</span></td></tr>
+      <tr><td class="bf">Apex bind variables in <span class="mono">WHERE</span></td><td class="low">Yes</td><td class="low">Yes &mdash; identical syntax inside <span class="mono">RETURNING(...)</span></td></tr>
       <tr><td class="bf">Search groups (NAME, EMAIL, PHONE, ALL FIELDS)</td><td class="high">No</td><td class="low">Yes</td></tr>
       <tr><td class="bf">Performance characteristic at LDV scale</td><td class="med">Bound by selectivity ladders (<a class="rref" href="#r09" onclick="navTo('r09');return false;">&sect;09</a>); slows as object grows</td><td class="low">Search index is tokenized, in-memory, often <span class="bold">orders of magnitude faster</span> than SOQL even on a single object</td></tr>
     </tbody>
@@ -1977,6 +1978,7 @@ fields                =  [MyField__c]</pre>
       <div class="ch ch-red">&#10007; Rule SOSL Out (the disqualifier list &mdash; explicit checklist)</div>
       <div class="cb">
         <ul class="bullet">
+          <li class="bad"><span class="bold">You already have the record Id(s).</span> If you have the Id (or a set of Ids), use SOQL with <span class="mono">WHERE Id = :id</span> or <span class="mono">WHERE Id IN :ids</span>. The Id index is the fastest path on the platform &mdash; no tokenization step, no 15-min lag, deterministic, transactionally consistent. SOSL is for <em>finding</em> records you don't yet have Ids for; never reach for it when the Ids are already in hand.</li>
           <li class="bad"><span class="bold">You need the record you JUST wrote</span> in the same transaction or within ~15 minutes &mdash; the search index hasn't caught up. Use SOQL, or use the SOSL&rarr;SOQL fallback below to cover the lag window explicitly.</li>
           <li class="bad"><span class="bold">You need an aggregation, count, or sum</span> &mdash; SOSL doesn't do <span class="mono">COUNT()</span>, <span class="mono">GROUP BY</span>, or <span class="mono">SUM()</span>. Use SOQL.</li>
           <li class="bad"><span class="bold">You need to filter on numeric / date / boolean ranges</span> as the primary predicate (not as a <span class="mono">RETURNING ... WHERE</span> qualifier). Use SOQL.</li>
@@ -2054,6 +2056,91 @@ fields                =  [MyField__c]</pre>
     <span class="nu">300</span>); <span class="cm">// 5-min TTL incl. NEGATIVE</span>
 }</pre>
         <div class="tip-box mt-6"><strong>Cache the negative result.</strong> Every "not found" without caching is another full search. <span class="bold">Negative caching</span> with a short TTL is the real win.</div>
+      </div>
+    </div>
+
+    <div class="card" style="grid-column: 1 / -1;" data-search="sosl all fields parameterized where bind variables soql like precision iteration validation for each">
+      <div class="ch ch-teal">&#127919; Beyond <span class="mono">NAME FIELDS</span> &mdash; SOSL With SOQL-Like Precision</div>
+      <div class="cb">
+        <div class="text-sm mb-8">The most common SOSL example online is <span class="mono">FIND :term IN NAME FIELDS RETURNING Account(Id, Name)</span>. That's the entry point, not the ceiling. Two patterns unlock SOSL's full precision:</div>
+
+        <div class="grid-2 gap-12">
+
+          <div>
+            <div class="csec">A &middot; <span class="mono">ALL FIELDS</span> + Multi-Criteria <span class="mono">WHERE</span> + Bind Variables</div>
+            <pre class="code-block"><span class="cm">// Apex bind vars work the same as SOQL inside RETURNING(...)</span>
+<span class="kw">String</span>   term    = userInput + <span class="st">'*'</span>;   <span class="cm">// trailing wildcard OK</span>
+<span class="kw">Id</span>       ownerId = <span class="cl">UserInfo</span>.getUserId();
+<span class="kw">DateTime</span> since   = <span class="cl">DateTime</span>.now().addDays(<span class="nu">-90</span>);
+<span class="kw">Decimal</span>  minRev  = <span class="nu">1000000</span>;
+
+<span class="kw">List</span>&lt;<span class="kw">List</span>&lt;<span class="cl">SObject</span>&gt;&gt; r = [
+  <span class="kw">FIND</span> :term <span class="kw">IN</span> ALL FIELDS
+  <span class="kw">RETURNING</span>
+    Account(Id, Name, Industry, OwnerId, AnnualRevenue
+      <span class="kw">WHERE</span> IsDeleted = <span class="ok">false</span>
+        <span class="kw">AND</span> OwnerId = :ownerId
+        <span class="kw">AND</span> AnnualRevenue &gt;= :minRev
+        <span class="kw">AND</span> CreatedDate &gt;= :since
+      <span class="kw">ORDER BY</span> Name <span class="kw">LIMIT</span> <span class="nu">50</span>),
+    Contact(Id, Name, Email, AccountId
+      <span class="kw">WHERE</span> IsDeleted = <span class="ok">false</span>
+        <span class="kw">AND</span> Email != <span class="kw">null</span>
+      <span class="kw">ORDER BY</span> LastName <span class="kw">LIMIT</span> <span class="nu">50</span>)
+];</pre>
+            <ul class="bullet mt-6">
+              <li class="good"><span class="mono">IN ALL FIELDS</span> searches every searchable text field; default if <span class="mono">IN</span> is omitted</li>
+              <li class="good">Per-object <span class="mono">WHERE</span> / <span class="mono">ORDER BY</span> / <span class="mono">LIMIT</span> / <span class="mono">OFFSET</span> &mdash; same operators and bind syntax as SOQL</li>
+              <li class="good">Range, equality, null, IN-list, lookup-field comparisons all work inside <span class="mono">RETURNING(...)</span></li>
+              <li class="warn">Trailing <span class="mono">*</span> OK; <span class="bold">leading wildcards are not allowed</span> &mdash; SOSL never matches start-of-string</li>
+              <li class="warn">Escape SOSL-reserved chars in user input: <span class="mono">? &amp; | ! { } [ ] ( ) ^ ~ * : \ " ' + -</span></li>
+              <li class="warn">Apex uses <span class="mono">'term'</span>; SOAP/REST APIs use <span class="mono">{term}</span> &mdash; don't copy-paste between them</li>
+            </ul>
+          </div>
+
+          <div>
+            <div class="csec">B &middot; For-Each Validation &mdash; Apply Rules SOSL Can't Express</div>
+            <pre class="code-block"><span class="kw">List</span>&lt;<span class="kw">List</span>&lt;<span class="cl">SObject</span>&gt;&gt; r = [
+  <span class="kw">FIND</span> :term <span class="kw">IN</span> NAME FIELDS
+  <span class="kw">RETURNING</span>
+    Account(Id, Name, OwnerId, RecordTypeId, Industry
+      <span class="kw">WHERE</span> IsDeleted=<span class="ok">false</span> <span class="kw">LIMIT</span> <span class="nu">200</span>),
+    Contact(Id, Name, Email, AccountId
+      <span class="kw">WHERE</span> IsDeleted=<span class="ok">false</span> <span class="kw">LIMIT</span> <span class="nu">200</span>)
+];
+
+<span class="cm">// SOSL returns List&lt;List&lt;SObject&gt;&gt; indexed in the SAME ORDER</span>
+<span class="cm">// as objects appear in RETURNING. Cast and refine.</span>
+
+<span class="kw">List</span>&lt;Account&gt; kept = <span class="kw">new List</span>&lt;Account&gt;();
+<span class="kw">for</span> (Account a : (<span class="kw">List</span>&lt;Account&gt;) r[<span class="nu">0</span>]) {
+  <span class="cm">// Rules that don't fit cleanly in a WHERE clause:</span>
+  <span class="kw">if</span> (a.RecordTypeId == validRt
+      &amp;&amp; allowedOwners.contains(a.OwnerId)
+      &amp;&amp; a.Industry?.startsWith(<span class="st">'Tech'</span>)) {
+    kept.add(a);
+  }
+}
+
+<span class="kw">List</span>&lt;Contact&gt; contacts = <span class="kw">new List</span>&lt;Contact&gt;();
+<span class="kw">for</span> (Contact c : (<span class="kw">List</span>&lt;Contact&gt;) r[<span class="nu">1</span>]) {
+  <span class="kw">if</span> (c.Email != <span class="kw">null</span>
+      &amp;&amp; allowedDomains.contains(
+           c.Email.substringAfter(<span class="st">'@'</span>))) {
+    contacts.add(c);
+  }
+}</pre>
+            <ul class="bullet mt-6">
+              <li class="good">Outer list index follows <span class="mono">RETURNING</span> declaration order &mdash; deterministic</li>
+              <li class="good">Cast each inner list to its concrete type for compile-time safety</li>
+              <li class="good">For-each refines with logic that <span class="bold">SOSL/SOQL can't express</span>: regex, parsed-field validation, cross-collection allowlists, conditional shape requirements</li>
+              <li class="good">Pattern: SOSL returns a fast, narrow candidate set &rarr; for-each applies precision rules</li>
+            </ul>
+          </div>
+
+        </div>
+
+        <div class="info-box mt-10"><strong>The takeaway:</strong> SOSL's reputation as "tokenized text only, no real WHERE" comes from the <span class="mono">NAME FIELDS</span> intro examples. The full grammar &mdash; <span class="mono">ALL FIELDS</span> + per-object <span class="mono">WHERE</span> / <span class="mono">ORDER BY</span> / <span class="mono">LIMIT</span> + Apex bind vars + iterative validation &mdash; gives you SOQL-style precision on top of search-index speed. This is the form most production lookups should take on LDV objects.</div>
       </div>
     </div>
 
