@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
   Salesforce(R) Large Data Volumes (LDV) Architect Cheatsheet
-  Version: V0.0.2 (PRE-DRAFT)
+  Version: V0.0.3 (PRE-DRAFT)
   Last Modified: 2026-05-01
   Copyright (c) 2026 Dr. Paul Coleman. All rights reserved.
 
@@ -18,7 +18,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Salesforce(R) LDV Architect Cheatsheet &mdash; V0.0.2 PRE-DRAFT</title>
+<title>Salesforce(R) LDV Architect Cheatsheet &mdash; V0.0.3 PRE-DRAFT</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { width: 100%; height: 100%; overflow: hidden;
@@ -446,7 +446,7 @@ ol.bullet li::before {
   </div>
   <div id="hdr-title">
     <h1>Salesforce&reg; Large Data Volumes &mdash; Architect Cheatsheet
-      <span class="vbadge">V0.0.2</span>
+      <span class="vbadge">V0.0.3</span>
       <span class="draft-badge">PRE-DRAFT</span>
     </h1>
     <p>Last Modified 2026-MAY-01 &middot; &copy; 2026 Dr. Paul Coleman &middot; Unofficial Reference</p>
@@ -456,14 +456,14 @@ ol.bullet li::before {
     <div class="st"><div class="st-dot" style="background:#FF9A3C"></div><span class="st-v">40+</span>&nbsp;Thresholds</div>
     <div class="st"><div class="st-dot" style="background:#C23934"></div><span class="st-v">25+</span>&nbsp;Anti-Patterns</div>
     <div class="st"><div class="st-dot" style="background:#9050E9"></div><span class="st-v">7</span>&nbsp;Support Asks</div>
-    <div class="st"><div class="st-dot" style="background:#46E3B7"></div><span class="st-v">5</span>&nbsp;AI Workflows</div>
+    <div class="st"><div class="st-dot" style="background:#46E3B7"></div><span class="st-v">7</span>&nbsp;AI Workflows</div>
   </div>
   <input type="text" id="search-box" placeholder="/ Search&hellip;" autocomplete="off">
 </div>
 
 <div id="sidebar">
   <div class="nav-disclaimer">
-    <strong>&#9888; Pre-Draft V0.0.2</strong>
+    <strong>&#9888; Pre-Draft V0.0.3</strong>
     Authored with AI assistance. Verify every threshold against current
     Salesforce release notes before production use.
   </div>
@@ -525,16 +525,16 @@ ol.bullet li::before {
   <div class="nav-sec">Diagnostics &amp; Monitoring</div>
   <div class="nav-item" onclick="navTo('r29')"><span class="nav-tier t2">T2</span><div class="nav-dot" style="background:#9050E9"></div><span class="nav-num">29</span>Shield Real-Time Event Monitoring</div>
   <div class="nav-item" onclick="navTo('r30')"><span class="nav-tier t2">T2</span><div class="nav-dot" style="background:#79C0FF"></div><span class="nav-num">30</span>Optimizer App, Query Plan, ELO</div>
-  <div class="nav-item" onclick="navTo('r30b')"><span class="nav-tier t1">T1</span><div class="nav-dot" style="background:#9050E9"></div><span class="nav-num">30b</span>Scale Center, Scale Test, Apex Guru</div>
+  <div class="nav-item" onclick="navTo('r31')"><span class="nav-tier t1">T1</span><div class="nav-dot" style="background:#9050E9"></div><span class="nav-num">31</span>Scale Center, Scale Test, Apex Guru</div>
 
   <div class="nav-sec">Escalation &amp; AI</div>
-  <div class="nav-item" onclick="navTo('r31')"><span class="nav-tier t2">T2</span><div class="nav-dot" style="background:#c9a0ff"></div><span class="nav-num">31</span>When To Contact Salesforce Support</div>
-  <div class="nav-item" onclick="navTo('r32')"><span class="nav-tier t2">T2</span><div class="nav-dot" style="background:#46E3B7"></div><span class="nav-num">32</span>AI-Assisted LDV Audits</div>
+  <div class="nav-item" onclick="navTo('r32')"><span class="nav-tier t2">T2</span><div class="nav-dot" style="background:#c9a0ff"></div><span class="nav-num">32</span>When To Contact Salesforce Support</div>
+  <div class="nav-item" onclick="navTo('r33')"><span class="nav-tier t2">T2</span><div class="nav-dot" style="background:#46E3B7"></div><span class="nav-num">33</span>AI-Assisted LDV Audits</div>
 
   <div class="nav-sec">Reference</div>
-  <div class="nav-item" onclick="navTo('r33')"><span class="nav-tier t2">T2</span><div class="nav-dot" style="background:#FF9A3C"></div><span class="nav-num">33</span>Numerical Threshold Index</div>
-  <div class="nav-item" onclick="navTo('r33b')"><span class="nav-tier t2">T2</span><div class="nav-dot" style="background:#B0C4DE"></div><span class="nav-num">33b</span>Glossary &mdash; LDV Acronyms</div>
-  <div class="nav-item" onclick="navTo('r34')"><span class="nav-tier t3">T3</span><div class="nav-dot" style="background:#79C0FF"></div><span class="nav-num">34</span>Citations &amp; Further Reading</div>
+  <div class="nav-item" onclick="navTo('r34')"><span class="nav-tier t2">T2</span><div class="nav-dot" style="background:#FF9A3C"></div><span class="nav-num">34</span>Numerical Threshold Index</div>
+  <div class="nav-item" onclick="navTo('r35')"><span class="nav-tier t2">T2</span><div class="nav-dot" style="background:#B0C4DE"></div><span class="nav-num">35</span>Glossary &mdash; LDV Acronyms</div>
+  <div class="nav-item" onclick="navTo('r36')"><span class="nav-tier t3">T3</span><div class="nav-dot" style="background:#79C0FF"></div><span class="nav-num">36</span>Citations &amp; Further Reading</div>
 
   <div class="nav-sec">Keyboard</div>
   <div class="nav-kbd">
@@ -593,8 +593,8 @@ ol.bullet li::before {
           <li><span class="bold">Selectivity beats everything.</span> A query that returns &lt; 10% of rows on an indexed leading filter is fast at any scale. A query that doesn't is slow at any scale. <a class="rref" href="#r08" onclick="navTo('r08');return false;">&sect;08</a></li>
           <li><span class="bold">The CRM is not a data lake.</span> Salesforce is a transactional system of engagement &mdash; not a warehouse, archive, or 10-year reporting backend. Hot data only. <a class="rref" href="#r07" onclick="navTo('r07');return false;">&sect;07</a> &middot; <a class="rref" href="#r27" onclick="navTo('r27');return false;">&sect;27</a></li>
           <li><span class="bold">Skew is silent until it explodes.</span> &gt; 10K children per parent, &gt; 10K records per owner, &gt; 10K records per lookup &mdash; each is a lock-storm waiting for a bulk job. <a class="rref" href="#r22" onclick="navTo('r22');return false;">&sect;22</a></li>
-          <li><span class="bold">Measure before redesigning.</span> Query Plan tells you whether an index is in use; Scale Center tells you whether the org is healthy; Apex Guru tells you what to fix first. <a class="rref" href="#r30" onclick="navTo('r30');return false;">&sect;30</a> &middot; <a class="rref" href="#r30b" onclick="navTo('r30b');return false;">&sect;30b</a></li>
-          <li><span class="bold">Test at scale before cutover.</span> Scale Test in Full Sandbox is the only sanctioned way to validate LDV behavior pre-prod. The lock-contention class of regression cannot be reversed in flight. <a class="rref" href="#r30b" onclick="navTo('r30b');return false;">&sect;30b</a></li>
+          <li><span class="bold">Measure before redesigning.</span> Query Plan tells you whether an index is in use; Scale Center tells you whether the org is healthy; Apex Guru tells you what to fix first. <a class="rref" href="#r30" onclick="navTo('r30');return false;">&sect;30</a> &middot; <a class="rref" href="#r31" onclick="navTo('r31');return false;">&sect;31</a></li>
+          <li><span class="bold">Test at scale before cutover.</span> Scale Test in Full Sandbox is the only sanctioned way to validate LDV behavior pre-prod. The lock-contention class of regression cannot be reversed in flight. <a class="rref" href="#r31" onclick="navTo('r31');return false;">&sect;31</a></li>
         </ol>
       </div>
     </div>
@@ -614,7 +614,7 @@ ol.bullet li::before {
             <tr><td class="numcell">6</td><td class="bf">Scale Test</td><td>Will the org survive 5&times; current load?</td><td class="text-red">Full Sandbox, days</td></tr>
           </tbody>
         </table>
-        <div class="tip-box mt-6"><strong>Diagnostic ritual:</strong> Query Plan before merge &middot; Apex Guru weekly &middot; Scale Center daily during release soak &middot; Shield REM streaming for ops &middot; Scale Test before cutover. <a class="rref" href="#r30b" onclick="navTo('r30b');return false;">&sect;30b</a></div>
+        <div class="tip-box mt-6"><strong>Diagnostic ritual:</strong> Query Plan before merge &middot; Apex Guru weekly &middot; Scale Center daily during release soak &middot; Shield REM streaming for ops &middot; Scale Test before cutover. <a class="rref" href="#r31" onclick="navTo('r31');return false;">&sect;31</a></div>
       </div>
     </div>
 
@@ -627,19 +627,19 @@ ol.bullet li::before {
             <tr class="row-cat"><td colspan="3">Free in all editions</td></tr>
             <tr><td>Query Plan / SOQL Explain</td><td class="text-green">free</td><td><a class="rref" href="#r30" onclick="navTo('r30');return false;">&sect;30</a></td></tr>
             <tr><td>Optimizer App</td><td class="text-green">free</td><td><a class="rref" href="#r30" onclick="navTo('r30');return false;">&sect;30</a></td></tr>
-            <tr><td>Lightning Usage App</td><td class="text-green">free</td><td><a class="rref" href="#r30b" onclick="navTo('r30b');return false;">&sect;30b</a></td></tr>
+            <tr><td>Lightning Usage App</td><td class="text-green">free</td><td><a class="rref" href="#r31" onclick="navTo('r31');return false;">&sect;31</a></td></tr>
             <tr><td>Event Log Files (ELF)</td><td class="text-green">free (basic)</td><td><a class="rref" href="#r30" onclick="navTo('r30');return false;">&sect;30</a></td></tr>
             <tr class="row-cat"><td colspan="3">Edition-gated (Performance / Unlimited)</td></tr>
-            <tr><td>Scale Center (full)</td><td class="text-yellow">Perf / UE</td><td><a class="rref" href="#r30b" onclick="navTo('r30b');return false;">&sect;30b</a></td></tr>
-            <tr><td>Apex Guru</td><td class="text-yellow">Perf / UE</td><td><a class="rref" href="#r30b" onclick="navTo('r30b');return false;">&sect;30b</a></td></tr>
+            <tr><td>Scale Center (full)</td><td class="text-yellow">Perf / UE</td><td><a class="rref" href="#r31" onclick="navTo('r31');return false;">&sect;31</a></td></tr>
+            <tr><td>Apex Guru</td><td class="text-yellow">Perf / UE</td><td><a class="rref" href="#r31" onclick="navTo('r31');return false;">&sect;31</a></td></tr>
             <tr class="row-cat"><td colspan="3">Add-on / Bundle Required</td></tr>
             <tr><td>Shield Real-Time Event Monitoring</td><td class="text-orange">Shield / EM add-on</td><td><a class="rref" href="#r29" onclick="navTo('r29');return false;">&sect;29</a></td></tr>
             <tr><td>Field Audit Trail</td><td class="text-orange">Shield bundle</td><td><a class="rref" href="#r29" onclick="navTo('r29');return false;">&sect;29</a></td></tr>
             <tr><td>Threat Detection events</td><td class="text-orange">EE+ &amp; Shield</td><td><a class="rref" href="#r29" onclick="navTo('r29');return false;">&sect;29</a></td></tr>
             <tr class="row-cat"><td colspan="3">Salesforce Support engagement</td></tr>
-            <tr><td>Custom Indexes / Skinny Tables</td><td class="text-violet">Support case</td><td><a class="rref" href="#r31" onclick="navTo('r31');return false;">&sect;31</a></td></tr>
-            <tr><td>Defer Sharing Calc / Granular Locking</td><td class="text-violet">Support case</td><td><a class="rref" href="#r31" onclick="navTo('r31');return false;">&sect;31</a></td></tr>
-            <tr><td>Scale Test (sometimes)</td><td class="text-violet">Engagement</td><td><a class="rref" href="#r30b" onclick="navTo('r30b');return false;">&sect;30b</a></td></tr>
+            <tr><td>Custom Indexes / Skinny Tables</td><td class="text-violet">Support case</td><td><a class="rref" href="#r32" onclick="navTo('r32');return false;">&sect;32</a></td></tr>
+            <tr><td>Defer Sharing Calc / Granular Locking</td><td class="text-violet">Support case</td><td><a class="rref" href="#r32" onclick="navTo('r32');return false;">&sect;32</a></td></tr>
+            <tr><td>Scale Test (sometimes)</td><td class="text-violet">Engagement</td><td><a class="rref" href="#r31" onclick="navTo('r31');return false;">&sect;31</a></td></tr>
           </tbody>
         </table>
       </div>
@@ -656,13 +656,13 @@ ol.bullet li::before {
             <tr><td><span class="mono">UNABLE_TO_LOCK_ROW</span></td><td><a class="rref" href="#r18" onclick="navTo('r18');return false;">&sect;18</a>&ndash;<a class="rref" href="#r21" onclick="navTo('r21');return false;">&sect;21</a></td></tr>
             <tr><td>Bulk DML / migration job blowing up</td><td><a class="rref" href="#r23" onclick="navTo('r23');return false;">&sect;23</a> + <a class="rref" href="#r24" onclick="navTo('r24');return false;">&sect;24</a></td></tr>
             <tr><td><span class="mono">CONCURRENT_REQUESTS_LIMIT</span></td><td><a class="rref" href="#r06" onclick="navTo('r06');return false;">&sect;06</a> + <a class="rref" href="#r28" onclick="navTo('r28');return false;">&sect;28</a></td></tr>
-            <tr><td>Lightning page TTI &gt; 5s</td><td><a class="rref" href="#r30b" onclick="navTo('r30b');return false;">&sect;30b</a> &rarr; <a class="rref" href="#r29" onclick="navTo('r29');return false;">&sect;29</a></td></tr>
-            <tr><td>"Org is generally drifting / slower than last quarter"</td><td><a class="rref" href="#r30b" onclick="navTo('r30b');return false;">&sect;30b</a> + <a class="rref" href="#r30" onclick="navTo('r30');return false;">&sect;30</a></td></tr>
+            <tr><td>Lightning page TTI &gt; 5s</td><td><a class="rref" href="#r31" onclick="navTo('r31');return false;">&sect;31</a> &rarr; <a class="rref" href="#r29" onclick="navTo('r29');return false;">&sect;29</a></td></tr>
+            <tr><td>"Org is generally drifting / slower than last quarter"</td><td><a class="rref" href="#r31" onclick="navTo('r31');return false;">&sect;31</a> + <a class="rref" href="#r30" onclick="navTo('r30');return false;">&sect;30</a></td></tr>
             <tr><td>Skew (one parent / one owner / one lookup value)</td><td><a class="rref" href="#r22" onclick="navTo('r22');return false;">&sect;22</a></td></tr>
             <tr><td>"We have 7 years of closed Cases hot"</td><td><a class="rref" href="#r07" onclick="navTo('r07');return false;">&sect;07</a> + <a class="rref" href="#r27" onclick="navTo('r27');return false;">&sect;27</a></td></tr>
-            <tr><td>Pre-cutover load validation</td><td><a class="rref" href="#r30b" onclick="navTo('r30b');return false;">&sect;30b</a> (Scale Test)</td></tr>
-            <tr><td>"Salesforce wants me to file a case &mdash; what do I bring?"</td><td><a class="rref" href="#r31" onclick="navTo('r31');return false;">&sect;31</a></td></tr>
-            <tr><td>Want to AI-audit a class / Flow / archive policy</td><td><a class="rref" href="#r32" onclick="navTo('r32');return false;">&sect;32</a></td></tr>
+            <tr><td>Pre-cutover load validation</td><td><a class="rref" href="#r31" onclick="navTo('r31');return false;">&sect;31</a> (Scale Test)</td></tr>
+            <tr><td>"Salesforce wants me to file a case &mdash; what do I bring?"</td><td><a class="rref" href="#r32" onclick="navTo('r32');return false;">&sect;32</a></td></tr>
+            <tr><td>Want to AI-audit a class / Flow / archive policy</td><td><a class="rref" href="#r33" onclick="navTo('r33');return false;">&sect;33</a></td></tr>
           </tbody>
         </table>
       </div>
@@ -798,10 +798,10 @@ ol.bullet li::before {
               <thead><tr><th>Tier</th><th>Access?</th><th>What You Can Do</th></tr></thead>
               <tbody>
                 <tr><td class="bf">Underlying RDBMS<br><span class="text-xs text-muted">Oracle / Postgres, the actual physical engine</span></td><td class="bf high">NO direct access</td><td>Cannot SSH to the DB, cannot run native <span class="mono">EXPLAIN</span> on the underlying SQL, cannot add B-tree/hash/GIN indexes, cannot rewrite the platform-generated SQL, cannot gather native statistics, cannot run <span class="mono">VACUUM</span>/<span class="mono">ANALYZE</span>, cannot tune buffer pools.</td></tr>
-                <tr><td class="bf">Metadata Abstraction Tier<br><span class="text-xs text-muted">Salesforce-mediated equivalents</span></td><td class="bf low">YES &mdash; via metadata + tools</td><td><span class="bold">Query Performance Feedback / SOQL Explain</span> (<a class="rref" href="#r30" onclick="navTo('r30');return false;">&sect;30</a>) is the platform-mediated equivalent of <span class="mono">EXPLAIN</span> &mdash; same intent, different surface. Indexes are requested via Custom Index XML or Support cases (<a class="rref" href="#r08" onclick="navTo('r08');return false;">&sect;08</a>, <a class="rref" href="#r31" onclick="navTo('r31');return false;">&sect;31</a>). Statistics refresh nightly automatically. The platform exposes <em>what the optimizer chose</em>, not <em>what the underlying DB ran</em>.</td></tr>
+                <tr><td class="bf">Metadata Abstraction Tier<br><span class="text-xs text-muted">Salesforce-mediated equivalents</span></td><td class="bf low">YES &mdash; via metadata + tools</td><td><span class="bold">Query Performance Feedback / SOQL Explain</span> (<a class="rref" href="#r30" onclick="navTo('r30');return false;">&sect;30</a>) is the platform-mediated equivalent of <span class="mono">EXPLAIN</span> &mdash; same intent, different surface. Indexes are requested via Custom Index XML or Support cases (<a class="rref" href="#r08" onclick="navTo('r08');return false;">&sect;08</a>, <a class="rref" href="#r32" onclick="navTo('r32');return false;">&sect;32</a>). Statistics refresh nightly automatically. The platform exposes <em>what the optimizer chose</em>, not <em>what the underlying DB ran</em>.</td></tr>
               </tbody>
             </table>
-            <div class="mt-6 text-sm">In other words: <span class="bold">"can't run EXPLAIN" is wrong; "can't run EXPLAIN against Oracle/Postgres directly" is right.</span> You have a Salesforce-shaped SOQL Explain (<a class="rref" href="#r30" onclick="navTo('r30');return false;">&sect;30</a>) that operates on the optimizer's plan, not the RDBMS's plan. You influence the auto-generated SQL by tuning what feeds the optimizer: filter design, indexed fields, metadata levers, and Support-coordinated artifacts (custom indexes, skinny tables, granular locking &mdash; see <a class="rref" href="#r31" onclick="navTo('r31');return false;">&sect;31</a>).</div>
+            <div class="mt-6 text-sm">In other words: <span class="bold">"can't run EXPLAIN" is wrong; "can't run EXPLAIN against Oracle/Postgres directly" is right.</span> You have a Salesforce-shaped SOQL Explain (<a class="rref" href="#r30" onclick="navTo('r30');return false;">&sect;30</a>) that operates on the optimizer's plan, not the RDBMS's plan. You influence the auto-generated SQL by tuning what feeds the optimizer: filter design, indexed fields, metadata levers, and Support-coordinated artifacts (custom indexes, skinny tables, granular locking &mdash; see <a class="rref" href="#r32" onclick="navTo('r32');return false;">&sect;32</a>).</div>
           </div>
         </div>
       </div>
@@ -1272,7 +1272,7 @@ ol.bullet li::before {
             <tr><td>Two-column composite index (filter + sort, AND on two fields)</td><td class="bf high">Path 2 &mdash; Support case</td></tr>
             <tr><td>Null-Inclusive index (filter on <span class="mono">WHERE field = null</span>)</td><td class="bf high">Path 2 &mdash; Support case</td></tr>
             <tr><td>Index on a standard field that isn't auto-indexed</td><td class="bf high">Path 2 &mdash; Support case</td></tr>
-            <tr><td>Skinny table (separate construct &mdash; <a class="rref" href="#r31" onclick="navTo('r31');return false;">&sect;31</a>)</td><td class="bf high">Path 2 &mdash; Support case (always)</td></tr>
+            <tr><td>Skinny table (separate construct &mdash; <a class="rref" href="#r32" onclick="navTo('r32');return false;">&sect;32</a>)</td><td class="bf high">Path 2 &mdash; Support case (always)</td></tr>
             <tr><td>Long Text / Rich Text / Encrypted / multi-select picklist / non-deterministic formula</td><td class="bf dim">Neither &mdash; not indexable; refactor (<a class="rref" href="#r10" onclick="navTo('r10');return false;">&sect;10</a>)</td></tr>
           </tbody>
         </table>
@@ -1470,7 +1470,7 @@ fields                =  [MyField__c]</pre>
         <div class="text-sm mt-6">The ladders below quantify this for every realistic object size. <span class="bold">If your filter's match count fits in the right column, the index is used. If it doesn't, the index is skipped &mdash; even if the field is indexed.</span></div>
       </div>
     </div>
-    <div class="mt-8 text-sm"><strong>Why this is the most important section in the document:</strong> every selectivity-driven anti-pattern (<a class="rref" href="#r10" onclick="navTo('r10');return false;">&sect;10</a>), every AND/OR/LIKE rule (<a class="rref" href="#r11" onclick="navTo('r11');return false;">&sect;11</a>), and every "should I ask Support for a custom index?" decision (<a class="rref" href="#r31" onclick="navTo('r31');return false;">&sect;31</a>) traces back to these threshold ladders. Architects who know these numbers diagnose LDV pain in seconds; those who don't write tickets that bounce around for weeks.</div>
+    <div class="mt-8 text-sm"><strong>Why this is the most important section in the document:</strong> every selectivity-driven anti-pattern (<a class="rref" href="#r10" onclick="navTo('r10');return false;">&sect;10</a>), every AND/OR/LIKE rule (<a class="rref" href="#r11" onclick="navTo('r11');return false;">&sect;11</a>), and every "should I ask Support for a custom index?" decision (<a class="rref" href="#r32" onclick="navTo('r32');return false;">&sect;32</a>) traces back to these threshold ladders. Architects who know these numbers diagnose LDV pain in seconds; those who don't write tickets that bounce around for weeks.</div>
     <div class="mt-6 text-xs"><span class="text-muted">Citations:</span> <a href="https://developer.salesforce.com/docs/atlas.en-us.salesforce_large_data_volumes_bp.meta/salesforce_large_data_volumes_bp/ldv_deployments_infrastructure_indexes.htm" target="_blank">Salesforce LDV Best Practices &mdash; Indexes</a> &middot; <a href="https://developer.salesforce.com/docs/atlas.en-us.salesforce_large_data_volumes_bp.meta/salesforce_large_data_volumes_bp/ldv_deployments_infrastructure_salesforce_query_optimizer.htm" target="_blank">Lightning Platform Query Optimizer</a> &middot; <a href="https://help.salesforce.com/s/articleView?id=000386021&amp;type=1" target="_blank">Help / Lightning Platform Query Optimization FAQ</a></div>
   </div>
 
@@ -4146,8 +4146,8 @@ Notes: <span class="ok">Index</span></pre>
      REGION 27b — SCALE CENTER, SCALE TEST, APEX GURU, LIGHTNING USAGE
      The OOTB performance-observability stack that supplements Shield REM.
 ════════════════════════════════════════════════════════════════════════ -->
-<div id="r30b" class="region r-shield" style="left:40px;top:18000px;width:4420px;height:1100px;">
-<div class="rh">30b &mdash; Scale Center, Scale Test, Apex Guru, Lightning Usage &mdash; The OOTB Performance Stack</div>
+<div id="r31" class="region r-shield" style="left:40px;top:18000px;width:4420px;height:1100px;">
+<div class="rh">31 &mdash; Scale Center, Scale Test, Apex Guru, Lightning Usage &mdash; The OOTB Performance Stack</div>
 <div class="rb">
 
   <div class="shield-box mb-12"><strong>Where this fits:</strong> Shield REM (<a class="rref" href="#r29" onclick="navTo('r29');return false;">&sect;29</a>) is the raw event firehose; Query Plan (<a class="rref" href="#r30" onclick="navTo('r30');return false;">&sect;30</a>) is the per-query microscope. This region is what sits <span class="bold">in between</span> &mdash; Salesforce's curated, OOTB observability surfaces that read those same signals and hand you trends, summaries, and AI-prioritized recommendations without writing a single Pub/Sub subscriber.</div>
@@ -4229,7 +4229,7 @@ Notes: <span class="ok">Index</span></pre>
       <div class="ch ch-shield">D &middot; Apex Guru &mdash; AI-Driven Apex / SOQL Recommendations <span class="badge b-ai" style="margin-left:auto">AI</span></div>
       <div class="cb">
         <div class="csec">What It Is</div>
-        <div class="text-sm mb-6">Setup &rarr; <span class="mono">Apex Guru</span>. GA 2024. Reads <span class="bold">your actual production execution traces</span> and surfaces ranked recommendations: slow methods, SOQL anti-patterns, expensive callouts, governor-limit hot spots. The OOTB equivalent of the AI workflows in <a class="rref" href="#r32" onclick="navTo('r32');return false;">&sect;32</a> &mdash; but on real prod data, no copy-paste required.</div>
+        <div class="text-sm mb-6">Setup &rarr; <span class="mono">Apex Guru</span>. GA 2024. Reads <span class="bold">your actual production execution traces</span> and surfaces ranked recommendations: slow methods, SOQL anti-patterns, expensive callouts, governor-limit hot spots. The OOTB equivalent of the AI workflows in <a class="rref" href="#r33" onclick="navTo('r33');return false;">&sect;33</a> &mdash; but on real prod data, no copy-paste required.</div>
         <div class="csec">What It Catches</div>
         <ul class="bullet">
           <li><span class="bold">Unselective SOQL</span> &mdash; matches the patterns in <a class="rref" href="#r10" onclick="navTo('r10');return false;">&sect;10</a> automatically</li>
@@ -4273,8 +4273,8 @@ Notes: <span class="ok">Index</span></pre>
 <!-- ════════════════════════════════════════════════════════════════════
      REGION 28 — WHEN TO CONTACT SUPPORT  (40, 18280  2200x800)
 ════════════════════════════════════════════════════════════════════════ -->
-<div id="r31" class="region r-iris" style="left:40px;top:18280px;width:2200px;height:800px;">
-<div class="rh">31 &mdash; When To Contact Salesforce Customer Support</div>
+<div id="r32" class="region r-iris" style="left:40px;top:18280px;width:2200px;height:800px;">
+<div class="rh">32 &mdash; When To Contact Salesforce Customer Support</div>
 <div class="rb">
 
   <div class="text-sm text-muted mb-10">A Support case is the right move for these levers. Bring: object name + field API names + sample query + selectivity stats + business justification.</div>
@@ -4307,11 +4307,32 @@ Notes: <span class="ok">Index</span></pre>
 <!-- ════════════════════════════════════════════════════════════════════
      REGION 29 — AI-ASSISTED LDV AUDITS  (2280, 18280  2180x800)
 ════════════════════════════════════════════════════════════════════════ -->
-<div id="r32" class="region r-ai" style="left:2280px;top:18280px;width:2180px;height:800px;">
-<div class="rh">32 &mdash; AI-Assisted LDV Audits &mdash; Code, Flow, Data, Archive Strategy</div>
+<div id="r33" class="region r-ai" style="left:2280px;top:18280px;width:2180px;height:800px;">
+<div class="rh">33 &mdash; AI-Assisted LDV Audits &mdash; Beyond What Apex Guru Covers</div>
 <div class="rb">
 
-  <div class="info-box mb-10" style="font-size:13px;"><strong>&#129302; AI changes the LDV audit equation.</strong> Apex SOQL audits, Flow refactors, and archive-policy drafts that took weeks of senior architect time can now be turbo-charged with Claude Code, Codex, or Gemini. Always pair AI output with human review against the thresholds in this cheatsheet.</div>
+  <div class="info-box mb-10" style="font-size:13px;"><strong>&#129302; Where this fits.</strong> Apex Guru (<a class="rref" href="#r31" onclick="navTo('r31');return false;">&sect;31</a>) is the OOTB, Salesforce-native AI &mdash; trained on Salesforce-internal patterns, grounded in your actual prod traces, with no setup. <span class="bold">BYO AI</span> (Claude / Codex / Gemini) is what you reach for when the question goes beyond what Apex Guru does: speculative refactors, code that hasn't deployed yet, Flows, sharing-model design, archive policy drafts, and Support-case packaging. The two are complementary, not competitive.</div>
+
+  <div class="card mb-10" style="border-color: rgba(70,227,183,.4);" data-search="ootb ai vs byo ai apex guru claude codex gemini decision when to use which">
+    <div class="ch ch-ai">&#9878;&#65039; OOTB AI (Apex Guru) vs BYO AI &mdash; When To Reach For Each</div>
+    <div class="cb">
+      <table class="tbl">
+        <thead><tr><th>Question</th><th>Use OOTB AI &mdash; Apex Guru</th><th>Use BYO AI &mdash; Claude / Codex / Gemini</th></tr></thead>
+        <tbody>
+          <tr><td>"What's slow in prod right now?"</td><td class="text-green bold">&#10003;</td><td class="dim">&mdash;</td></tr>
+          <tr><td>"Triage these 50 Apex Guru recommendations &mdash; what do I fix first?"</td><td class="dim">&mdash;</td><td class="text-green bold">&#10003;</td></tr>
+          <tr><td>"Refactor this Flow / Process Builder for bulk safety"</td><td class="dim">&mdash;</td><td class="text-green bold">&#10003;</td></tr>
+          <tr><td>"Audit this Apex class before I deploy it"</td><td class="dim">post-deploy only</td><td class="text-green bold">&#10003;</td></tr>
+          <tr><td>"Design a Big Object index for these access patterns"</td><td class="dim">&mdash;</td><td class="text-green bold">&#10003;</td></tr>
+          <tr><td>"Predict the sharing-recalc cost of moving these users"</td><td class="dim">&mdash;</td><td class="text-green bold">&#10003;</td></tr>
+          <tr><td>"Package a custom-index request for Salesforce Support"</td><td class="dim">&mdash;</td><td class="text-green bold">&#10003;</td></tr>
+          <tr><td>"Why did Scale Center show a regression on Tuesday?"</td><td class="dim">partial</td><td class="text-green bold">&#10003;</td></tr>
+          <tr><td>"Identify SOQL anti-patterns from execution traces"</td><td class="text-green bold">&#10003;</td><td class="dim">redundant</td></tr>
+        </tbody>
+      </table>
+      <div class="tip-box mt-6"><strong>Rule of thumb:</strong> Apex Guru answers <em>"what is slow?"</em> on real prod data with no human input. BYO AI answers <em>"design / explain / draft / refactor"</em> &mdash; the things that need a human-curated prompt and don't yet exist as production code.</div>
+    </div>
+  </div>
 
   <div class="ai-dialog mb-10">
     <div class="ai-prompt-bar">
@@ -4344,32 +4365,37 @@ Notes: <span class="ok">Index</span></pre>
           <li class="good">AI catches: per-record loops, recursion, mid-flow callouts</li>
           <li class="good">Output: refactored Flow + bypass Custom Setting</li>
         </ul>
+        <div class="text-xs text-muted mt-6">Apex Guru doesn't audit Flow/PB metadata &mdash; this is BYO-only.</div>
       </div>
     </div>
 
-    <div class="card ok" data-search="ai workflow archive strategy data tiering retention">
+    <div class="card ok" data-search="ai workflow archive strategy data tiering retention big object">
       <div class="ch ch-ai">&#129302; Workflow B &mdash; Archive Strategy Generator</div>
       <div class="cb">
         <ul class="bullet">
           <li class="good">Provide: object name + row count + access patterns + retention requirement</li>
           <li class="good">Ask AI: "Propose hot/warm/cold tiering + Big Object schema + Bulk API job to migrate"</li>
           <li class="good">Output: written policy doc, Big Object metadata, Apex migration job, restoration runbook</li>
+          <li class="good">Pair with <a class="rref" href="#r07" onclick="navTo('r07');return false;">&sect;07</a> (CRM vs Data Cloud) decision; <a class="rref" href="#r27" onclick="navTo('r27');return false;">&sect;27</a> (Hot/Cold) thresholds</li>
         </ul>
       </div>
     </div>
 
-    <div class="card ok" data-search="ai workflow query plan analysis selectivity audit">
-      <div class="ch ch-ai">&#129302; Workflow C &mdash; Query Plan Analyzer</div>
+    <div class="card ok" data-search="ai workflow apex guru triage prioritize recommendations roi pr">
+      <div class="ch ch-ai">&#129302; Workflow C &mdash; Apex Guru Triage Partner</div>
       <div class="cb">
+        <div class="text-sm mb-6">Apex Guru hands you a ranked list of recommendations &mdash; sometimes 50+ at once. Triage with AI:</div>
         <ul class="bullet">
-          <li class="good">Paste Query Plan output from Dev Console</li>
-          <li class="good">AI explains why optimizer chose path X, suggests rewrites</li>
-          <li class="good">Identifies missing indexes, estimates Support-case justification</li>
+          <li class="good">Export Apex Guru recommendations (JSON / CSV / page paste)</li>
+          <li class="good">Ask AI: "Group by root cause, dedupe, rank by ROI (impact &times; reach &divide; effort)"</li>
+          <li class="good">AI clusters related findings (e.g., 12 different methods all hit the same unselective filter on <span class="mono">AccountStatus__c</span>)</li>
+          <li class="good">Output: prioritized backlog with PR descriptions and effort estimates</li>
         </ul>
+        <div class="tip-box mt-6"><strong>Why this works:</strong> Apex Guru is great at finding problems but ranks them per-method, not per-root-cause. AI batches them so you fix one custom index and clear 12 recommendations.</div>
       </div>
     </div>
 
-    <div class="card ok" data-search="ai workflow data skew detector hot parent owner">
+    <div class="card ok" data-search="ai workflow data skew detector hot parent owner lookup">
       <div class="ch ch-ai">&#129302; Workflow D &mdash; Skew Detector</div>
       <div class="cb">
         <ul class="bullet">
@@ -4380,15 +4406,63 @@ Notes: <span class="ok">Index</span></pre>
       </div>
     </div>
 
-    <div class="card ok" style="grid-column: 1 / -1;" data-search="ai workflow shield rem subscription policy generator">
-      <div class="ch ch-ai">&#129302; Workflow E &mdash; Shield REM Subscription &amp; Policy Generator</div>
+    <div class="card ok" style="grid-column: 1 / -1;" data-search="ai workflow shield rem scale center anomaly narration regression explain">
+      <div class="ch ch-ai">&#129302; Workflow E &mdash; REM Subscription + Scale Center Anomaly Narration</div>
       <div class="cb">
+        <div class="grid-2 gap-12">
+          <div>
+            <div class="csec">E.1 &middot; Shield REM Subscription &amp; Policy Generator</div>
+            <ul class="bullet">
+              <li class="good">Describe the LDV pain (slow page X, slow report Y, lock contention on Z)</li>
+              <li class="good">AI proposes: events to subscribe to, EventBridge relay config, Transaction Security Policy XML, dashboards in CRM Analytics / Splunk</li>
+              <li class="good">Output: deployable metadata + sample queries against ELO</li>
+            </ul>
+          </div>
+          <div>
+            <div class="csec">E.2 &middot; Scale Center Anomaly Narration</div>
+            <ul class="bullet">
+              <li class="good">Paste 7-day Scale Center trend data + recent change-log entries</li>
+              <li class="good">Ask AI: "Explain the regression starting Tuesday afternoon"</li>
+              <li class="good">AI correlates the trend with deploys, flag flips, traffic shifts, role changes &mdash; produces a ranked hypothesis list</li>
+              <li class="good">Output: incident summary + suggested next diagnostic step (drill into ELO, run Apex Guru, check Lightning Usage)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card ok" data-search="ai workflow custom index support case packager selectivity rollup justification">
+      <div class="ch ch-ai">&#129302; Workflow F &mdash; Custom-Index Support-Case Packager</div>
+      <div class="cb">
+        <div class="text-sm mb-6">Salesforce Support rejects custom-index cases that lack the required evidence. <a class="rref" href="#r32" onclick="navTo('r32');return false;">&sect;32</a> spells out the format; AI assembles it from parts.</div>
         <ul class="bullet">
-          <li class="good">Describe the LDV pain (slow page X, slow report Y, lock contention on Z)</li>
-          <li class="good">AI proposes: events to subscribe to, EventBridge relay config, Transaction Security Policy XML, dashboards in CRM Analytics / Splunk</li>
-          <li class="good">Output: deployable metadata + sample queries against ELO</li>
+          <li class="good">Provide: object + field API names + sample SOQL + Query Plan output + selectivity rollup + business justification (1 sentence)</li>
+          <li class="good">Ask AI: "Draft the Salesforce Support case body in their accepted format"</li>
+          <li class="good">AI structures the request, computes the selectivity ratio, calls out range-collapse opportunities, suggests two-column composite if AND filter is recurring</li>
+          <li class="good">Output: copy-paste-ready case body + the supporting attachments list</li>
         </ul>
-        <div class="warn-box mt-6"><strong>Never paste production data into a public AI tool.</strong> Use field API names, schemas, and synthetic counts. For production-only audits, prefer Salesforce-hosted AI (Einstein for Developers, Agentforce for Developers) or self-hosted Claude / OpenAI via Anthropic / OpenAI Enterprise.</div>
+        <div class="tip-box mt-6"><strong>High-ROI:</strong> the typical custom-index case round-trips 3&ndash;5 times before approval. A well-packaged first submission clears in one pass.</div>
+      </div>
+    </div>
+
+    <div class="card ok" data-search="ai workflow sharing storm predictor recalc owd role hierarchy bulk migration">
+      <div class="ch ch-ai">&#129302; Workflow G &mdash; Sharing-Storm Predictor</div>
+      <div class="cb">
+        <div class="text-sm mb-6">Sharing-recalc cost is the silent killer of role reorgs and ownership migrations. The damage is invisible until the job runs.</div>
+        <ul class="bullet">
+          <li class="good">Provide: OWD posture + role hierarchy depth + sharing-rule count + manual-share counts + the proposed change (move N users / reassign M records / collapse role branch)</li>
+          <li class="good">Ask AI: "Predict the sharing-recalc cost; flag implicit-share cliffs; recommend Defer Sharing posture"</li>
+          <li class="good">AI walks the role hierarchy, estimates downstream share rows, identifies which sharing rules will fire, suggests phased execution + Defer Sharing windows (<a class="rref" href="#r24" onclick="navTo('r24');return false;">&sect;24</a>)</li>
+          <li class="good">Output: pre-flight checklist + execution order + rollback plan</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card warn" style="grid-column: 1 / -1;" data-search="ai data security never paste production data einstein agentforce enterprise">
+      <div class="ch ch-ai">&#9888;&#65039; Data-Privacy Discipline &mdash; The One Rule</div>
+      <div class="cb">
+        <div class="warn-box"><strong>Never paste production data into a public AI tool.</strong> Use field API names, schemas, and synthetic counts. For production-only audits, prefer Salesforce-hosted AI (Einstein for Developers, Agentforce for Developers, Apex Guru) or self-hosted Claude / OpenAI via Anthropic / OpenAI Enterprise. The pattern across every workflow above: <span class="bold">structure and metadata are safe to share; record-level PII is not.</span></div>
+        <div class="text-xs text-muted mt-6">Forward-looking: Agentforce-style autonomous agents subscribed to REM events &mdash; agents that learn the org's normal pattern and page on real anomalies (not threshold alerts) &mdash; are the natural endpoint of where Salesforce-native LDV AI is heading. As of 2026 most customers are still in the prompt-and-paste BYO phase tabulated above.</div>
       </div>
     </div>
 
@@ -4400,8 +4474,8 @@ Notes: <span class="ok">Index</span></pre>
 <!-- ════════════════════════════════════════════════════════════════════
      REGION 30 — NUMERICAL THRESHOLD INDEX  (40, 19100  2200x800)
 ════════════════════════════════════════════════════════════════════════ -->
-<div id="r33" class="region r-amber" style="left:40px;top:19100px;width:2200px;height:800px;">
-<div class="rh">33 &mdash; Numerical Threshold Index &mdash; The Numbers In One Place</div>
+<div id="r34" class="region r-amber" style="left:40px;top:19100px;width:2200px;height:800px;">
+<div class="rh">34 &mdash; Numerical Threshold Index &mdash; The Numbers In One Place</div>
 <div class="rb">
 
   <table class="tbl">
@@ -4484,8 +4558,8 @@ Notes: <span class="ok">Index</span></pre>
      REGION 30c — GLOSSARY
      LDV / Salesforce acronyms in one place; useful for first-time readers.
 ════════════════════════════════════════════════════════════════════════ -->
-<div id="r33b" class="region r-slate">
-<div class="rh">33b &mdash; Glossary &mdash; LDV Acronyms &amp; Jargon</div>
+<div id="r35" class="region r-slate">
+<div class="rh">35 &mdash; Glossary &mdash; LDV Acronyms &amp; Jargon</div>
 <div class="rb">
 
   <div class="info-box mb-12"><strong>Why this exists:</strong> the rest of this cheatsheet earns its density by leaning on shorthand. This region is the lookup table. If you've ever wondered what EPT, ELO, REM, DRAES, or VLSQ stands for &mdash; you're in the right place.</div>
@@ -4523,7 +4597,7 @@ Notes: <span class="ok">Index</span></pre>
             <tr><td class="bf mono">VLSQ</td><td>Very Large SOQL Queries. Salesforce's term for the chunk-and-iterate pattern for &gt; 50K-row results inside Apex.</td></tr>
             <tr><td class="bf mono">DML</td><td>Data Manipulation Language. Insert/update/upsert/delete operations.</td></tr>
             <tr><td class="bf mono">PK</td><td>Primary Key &mdash; "PK Chunking" in Bulk API splits a query into 18-character-Id ranges for parallelism. <a class="rref" href="#r23" onclick="navTo('r23');return false;">&sect;23</a></td></tr>
-            <tr><td class="bf mono">DRAES</td><td>Designing Record Access for Enterprise Scale. Salesforce's official sharing/visibility architecture guide. <a class="rref" href="#r34" onclick="navTo('r34');return false;">&sect;34</a></td></tr>
+            <tr><td class="bf mono">DRAES</td><td>Designing Record Access for Enterprise Scale. Salesforce's official sharing/visibility architecture guide. <a class="rref" href="#r36" onclick="navTo('r36');return false;">&sect;36</a></td></tr>
             <tr><td class="bf mono">RT</td><td>Record Type. Common selectivity lever (the standard index on RecordTypeId).</td></tr>
             <tr><td class="bf mono">OWD</td><td>Organization-Wide Defaults. The base sharing posture for an object (Public Read/Write, Private, etc.).</td></tr>
             <tr><td class="bf mono">FLS</td><td>Field-Level Security. Per-field access; intersects with profile/permission set assignments.</td></tr>
@@ -4547,9 +4621,9 @@ Notes: <span class="ok">Index</span></pre>
             <tr><td class="bf mono">Shield</td><td>Add-on bundle: Platform Encryption + REM + Field Audit Trail.</td></tr>
             <tr><td class="bf mono">EM Add-on</td><td>Event Monitoring add-on; the cheaper, ELF-only subset of Shield.</td></tr>
             <tr><td class="bf mono">Hyperforce</td><td>Salesforce's public-cloud (AWS) infrastructure tier; underlies ELO, newer Bulk API behavior, and other "modern surface" features.</td></tr>
-            <tr><td class="bf mono">Apex Guru</td><td>AI-driven Apex/SOQL recommendations from prod traces. <a class="rref" href="#r30b" onclick="navTo('r30b');return false;">&sect;30b</a></td></tr>
-            <tr><td class="bf mono">Scale Center</td><td>Org-level performance dashboard. <a class="rref" href="#r30b" onclick="navTo('r30b');return false;">&sect;30b</a></td></tr>
-            <tr><td class="bf mono">Scale Test</td><td>Sandbox-based load-testing framework. <a class="rref" href="#r30b" onclick="navTo('r30b');return false;">&sect;30b</a></td></tr>
+            <tr><td class="bf mono">Apex Guru</td><td>AI-driven Apex/SOQL recommendations from prod traces. <a class="rref" href="#r31" onclick="navTo('r31');return false;">&sect;31</a></td></tr>
+            <tr><td class="bf mono">Scale Center</td><td>Org-level performance dashboard. <a class="rref" href="#r31" onclick="navTo('r31');return false;">&sect;31</a></td></tr>
+            <tr><td class="bf mono">Scale Test</td><td>Sandbox-based load-testing framework. <a class="rref" href="#r31" onclick="navTo('r31');return false;">&sect;31</a></td></tr>
             <tr><td class="bf mono">LWC</td><td>Lightning Web Components. The modern (post-Aura) frontend component model.</td></tr>
             <tr><td class="bf mono">VF</td><td>Visualforce. The legacy server-rendered UI framework.</td></tr>
           </tbody>
@@ -4587,8 +4661,8 @@ Notes: <span class="ok">Index</span></pre>
 <!-- ════════════════════════════════════════════════════════════════════
      REGION 31 — CITATIONS  (2280, 19100  2180x800)
 ════════════════════════════════════════════════════════════════════════ -->
-<div id="r34" class="region r-slate" style="left:2280px;top:19100px;width:2180px;height:800px;">
-<div class="rh">34 &mdash; Citations &amp; Further Reading &mdash; Authoritative Sources</div>
+<div id="r36" class="region r-slate" style="left:2280px;top:19100px;width:2180px;height:800px;">
+<div class="rh">36 &mdash; Citations &amp; Further Reading &mdash; Authoritative Sources</div>
 <div class="rb">
 
   <div class="text-xs text-muted mb-8">Every numerical threshold and architectural recommendation in this cheatsheet is sourced from the following Salesforce documentation. Verify against the current edition before production use.</div>
