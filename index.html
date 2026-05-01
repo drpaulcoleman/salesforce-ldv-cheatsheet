@@ -1958,6 +1958,53 @@ fields                =  [MyField__c]</pre>
     <div class="text-sm mt-6 bold text-orange">The architect's default rule: <span style="color:#FFFFFF">for any Apex record-lookup against an LDV object, evaluate SOSL FIRST. Only rule it out after a deliberate "not a good fit" check against the disqualifier list below.</span></div>
   </div>
 
+  <div class="card mb-12" style="border-color:rgba(70,227,183,.4);" data-search="like leading wildcard sosl refactor anti pattern roi single largest performance lever before after">
+    <div class="ch ch-teal">&#128293; The Single Largest LDV Refactor &mdash; <span class="mono">LIKE '%term%'</span> &rarr; SOSL</div>
+    <div class="cb">
+      <div class="text-sm mb-8">If your team is writing one of these, you have a 10&times;&ndash;100&times; performance refactor sitting in plain sight. Most LDV-painful Apex codebases have 5&ndash;20+ instances of the leading-wildcard <span class="mono">LIKE</span> pattern; each one is a search-index conversion candidate. Apex Guru flags them automatically (<a class="rref" href="#r31" onclick="navTo('r31');return false;">&sect;31</a>).</div>
+
+      <div class="grid-2 gap-12">
+        <div>
+          <div class="csec text-red">&#10007; Before &mdash; SOQL Anti-Pattern</div>
+          <pre class="code-block"><span class="cm">// Search Account by name fragment</span>
+<span class="kw">String</span> userInput = <span class="st">'%'</span> + term + <span class="st">'%'</span>;
+<span class="kw">List</span>&lt;Account&gt; r = [
+  <span class="kw">SELECT</span> Id, Name, Industry
+  <span class="kw">FROM</span> Account
+  <span class="kw">WHERE</span> Name <span class="kw">LIKE</span> :userInput
+    <span class="kw">AND</span> IsDeleted = <span class="ok">false</span>
+  <span class="kw">LIMIT</span> <span class="nu">200</span>
+];</pre>
+          <ul class="bullet mt-6">
+            <li class="bad">Leading <span class="mono">%</span> &mdash; index defeated, full table scan</li>
+            <li class="bad">Slows linearly with row count; 50M Accounts &rarr; <span class="mono">QUERY_TIMEOUT</span></li>
+            <li class="bad">No tokenization &mdash; <span class="mono">"Acme"</span> doesn't match <span class="mono">"Acme Inc"</span></li>
+            <li class="bad">SOQL Optimizer (<a class="rref" href="#r03" onclick="navTo('r03');return false;">&sect;03</a>) flags it; Apex Guru auto-detects on prod</li>
+          </ul>
+        </div>
+        <div>
+          <div class="csec text-green">&#10003; After &mdash; SOSL Refactor</div>
+          <pre class="code-block"><span class="cm">// Tokenized, search-index-backed lookup</span>
+<span class="kw">String</span> fragment = term + <span class="st">'*'</span>;   <span class="cm">// trailing wildcard</span>
+<span class="kw">List</span>&lt;<span class="kw">List</span>&lt;<span class="cl">SObject</span>&gt;&gt; r = [
+  <span class="kw">FIND</span> :fragment <span class="kw">IN</span> NAME FIELDS
+  <span class="kw">RETURNING</span> Account(Id, Name, Industry
+    <span class="kw">WHERE</span> IsDeleted=<span class="ok">false</span> <span class="kw">LIMIT</span> <span class="nu">200</span>)
+];
+<span class="kw">List</span>&lt;Account&gt; accts = (<span class="kw">List</span>&lt;Account&gt;) r[<span class="nu">0</span>];</pre>
+          <ul class="bullet mt-6">
+            <li class="good">Search index lookup &mdash; sub-second on 50M-row Account</li>
+            <li class="good"><span class="mono">"Acme"</span> matches <span class="mono">"Acme Inc"</span>, <span class="mono">"Acme Corp"</span>, <span class="mono">"Acme Ltd"</span></li>
+            <li class="good">Per-object <span class="mono">WHERE</span> keeps SOQL-style precision</li>
+            <li class="warn">Trade-off: ~15-min index lag &mdash; handle via fallback below</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="hot-cold-box mt-10"><span class="axiom">&#127919; The first refactor is the hardest; subsequent ones follow the template above.</span>Once one team member sees the order-of-magnitude improvement on a single hot lookup, the rest of the codebase usually converts within a sprint. This is the single highest-ROI LDV refactor available without a Support case.</div>
+    </div>
+  </div>
+
   <div class="grid-2 gap-12 mb-12">
     <div class="card ok">
       <div class="ch ch-green">&#10003; Use SOSL FIRST when (the typical case)</div>
@@ -1994,6 +2041,99 @@ fields                =  [MyField__c]</pre>
   </div>
 
   <div class="info-box mb-12"><strong>The full read pattern for an LDV-scale UI lookup, in priority order:</strong> &nbsp; (1) <a class="rref" href="#r15" onclick="navTo('r15');return false;">&sect;15</a> Platform Cache hit (sub-ms) &rarr; &nbsp; (2) SOSL with bounded <span class="mono">RETURNING</span> (search-index speed, ~15-min stale tolerance) &rarr; &nbsp; (3) SOQL fallback on the lag window only (recent-records-only, indexed by CreatedDate) &rarr; &nbsp; (4) Cache the result (positive AND negative). This is one of the strongest LDV read patterns available and is structurally invisible to most implementations.</div>
+
+  <div class="card mb-12" data-search="sosl two stage query model diagram tokenized find returning structured filter execution flow precision">
+    <div class="ch ch-teal">&#128202; The Two-Stage SOSL Query Model &mdash; Why It Has SOQL-Like Precision</div>
+    <div class="cb">
+      <div class="text-sm mb-8">SOSL's "limited" reputation comes from intro examples that stop at FIND. The full grammar is two-stage: tokenized text retrieval at search-index speed, then per-object structured filtering with the same operators and bind syntax as SOQL. Both stages run on every well-built SOSL query.</div>
+      <div class="figure">
+        <div class="figure-cap">&#128202; SOSL execution &mdash; tokenized FIND feeds per-object structured RETURNING; result is List&lt;List&lt;SObject&gt;&gt; in declaration order</div>
+        <svg viewBox="0 0 1100 420" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="sosl-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#5B7BA5"/>
+            </marker>
+          </defs>
+
+          <text x="20" y="14" font-size="9.5" class="lbl-mut">STAGE 1 &mdash; TOKENIZED TEXT MATCH (the FIND clause)</text>
+
+          <rect x="20" y="22" width="160" height="56" rx="6" fill="#0a1830" stroke="#1E4D7B"/>
+          <text x="100" y="46" text-anchor="middle" class="lbl" font-size="11">User Input</text>
+          <text x="100" y="64" text-anchor="middle" class="lbl-mut" font-size="10">"Acme*"</text>
+
+          <line x1="180" y1="50" x2="208" y2="50" stroke="#5B7BA5" stroke-width="1.5" marker-end="url(#sosl-arr)"/>
+
+          <rect x="210" y="22" width="200" height="56" rx="6" fill="#0a1830" stroke="#1E4D7B"/>
+          <text x="310" y="46" text-anchor="middle" class="lbl" font-size="11">Escape Reserved Chars</text>
+          <text x="310" y="65" text-anchor="middle" class="lbl-mut" font-size="9">? &amp; | ! { } [ ] ( ) ^ ~ * : \ " ' + -</text>
+
+          <line x1="410" y1="50" x2="438" y2="50" stroke="#5B7BA5" stroke-width="1.5" marker-end="url(#sosl-arr)"/>
+
+          <rect x="440" y="22" width="220" height="56" rx="6" fill="#0e1f3a" stroke="#16325C"/>
+          <text x="550" y="46" text-anchor="middle" class="lbl-em" font-size="11">FIND :term IN ALL FIELDS</text>
+          <text x="550" y="64" text-anchor="middle" class="lbl-mut" font-size="9">Apex bind variable, no SQL injection</text>
+
+          <line x1="660" y1="50" x2="688" y2="50" stroke="#5B7BA5" stroke-width="1.5" marker-end="url(#sosl-arr)"/>
+
+          <rect x="690" y="22" width="220" height="56" rx="6" fill="#1a0e08" stroke="#3a2010"/>
+          <text x="800" y="46" text-anchor="middle" class="lbl-warn" font-size="11">Tokenized Search Index</text>
+          <text x="800" y="64" text-anchor="middle" class="lbl-mut" font-size="9">global, in-memory, ~15-min lag</text>
+
+          <line x1="800" y1="86" x2="800" y2="125" stroke="#5B7BA5" stroke-width="1.5" marker-end="url(#sosl-arr)"/>
+          <text x="810" y="108" class="lbl-mut" font-size="10">candidate set (per object)</text>
+
+          <text x="20" y="148" font-size="9.5" class="lbl-mut">STAGE 2 &mdash; PER-OBJECT STRUCTURED FILTER (the RETURNING clause &mdash; SAME OPERATORS &amp; BIND SYNTAX AS SOQL)</text>
+
+          <line x1="800" y1="125" x2="180" y2="170" stroke="#5B7BA5" stroke-width="1" stroke-dasharray="3,3"/>
+          <line x1="800" y1="125" x2="540" y2="170" stroke="#5B7BA5" stroke-width="1" stroke-dasharray="3,3"/>
+          <line x1="800" y1="125" x2="900" y2="170" stroke="#5B7BA5" stroke-width="1" stroke-dasharray="3,3"/>
+
+          <rect x="40" y="170" width="280" height="100" rx="6" fill="#0e1f3a" stroke="#1E4D7B"/>
+          <text x="180" y="190" text-anchor="middle" class="lbl-em" font-size="11.5">RETURNING Account(...)</text>
+          <text x="180" y="210" text-anchor="middle" class="lbl-ok" font-size="10">WHERE OwnerId = :uid</text>
+          <text x="180" y="225" text-anchor="middle" class="lbl-ok" font-size="10">AND CreatedDate &gt;= :since</text>
+          <text x="180" y="240" text-anchor="middle" class="lbl-ok" font-size="10">AND AnnualRevenue &gt;= :rev</text>
+          <text x="180" y="258" text-anchor="middle" class="lbl" font-size="10">ORDER BY Name LIMIT 50</text>
+
+          <rect x="400" y="170" width="280" height="100" rx="6" fill="#0e1f3a" stroke="#1E4D7B"/>
+          <text x="540" y="190" text-anchor="middle" class="lbl-em" font-size="11.5">RETURNING Contact(...)</text>
+          <text x="540" y="210" text-anchor="middle" class="lbl-ok" font-size="10">WHERE Email != null</text>
+          <text x="540" y="225" text-anchor="middle" class="lbl-ok" font-size="10">AND IsDeleted = false</text>
+          <text x="540" y="240" text-anchor="middle" class="lbl-ok" font-size="10">AND AccountId IN :myAccts</text>
+          <text x="540" y="258" text-anchor="middle" class="lbl" font-size="10">ORDER BY LastName LIMIT 50</text>
+
+          <rect x="760" y="170" width="280" height="100" rx="6" fill="#0e1f3a" stroke="#1E4D7B"/>
+          <text x="900" y="190" text-anchor="middle" class="lbl-em" font-size="11.5">RETURNING Lead(...)</text>
+          <text x="900" y="210" text-anchor="middle" class="lbl-ok" font-size="10">WHERE Status = 'Open'</text>
+          <text x="900" y="225" text-anchor="middle" class="lbl-ok" font-size="10">AND Industry IN :ind</text>
+          <text x="900" y="240" text-anchor="middle" class="lbl-ok" font-size="10">AND OwnerId IN :sales</text>
+          <text x="900" y="258" text-anchor="middle" class="lbl" font-size="10">ORDER BY CreatedDate LIMIT 50</text>
+
+          <line x1="180" y1="270" x2="180" y2="298" stroke="#5B7BA5" stroke-width="1.5" marker-end="url(#sosl-arr)"/>
+          <line x1="540" y1="270" x2="540" y2="298" stroke="#5B7BA5" stroke-width="1.5" marker-end="url(#sosl-arr)"/>
+          <line x1="900" y1="270" x2="900" y2="298" stroke="#5B7BA5" stroke-width="1.5" marker-end="url(#sosl-arr)"/>
+
+          <rect x="100" y="298" width="160" height="36" rx="6" fill="#0a2018" stroke="#1a4030"/>
+          <text x="180" y="320" text-anchor="middle" class="lbl-ok" font-size="11">r[0]: List&lt;Account&gt;</text>
+
+          <rect x="460" y="298" width="160" height="36" rx="6" fill="#0a2018" stroke="#1a4030"/>
+          <text x="540" y="320" text-anchor="middle" class="lbl-ok" font-size="11">r[1]: List&lt;Contact&gt;</text>
+
+          <rect x="820" y="298" width="160" height="36" rx="6" fill="#0a2018" stroke="#1a4030"/>
+          <text x="900" y="320" text-anchor="middle" class="lbl-ok" font-size="11">r[2]: List&lt;Lead&gt;</text>
+
+          <line x1="180" y1="334" x2="180" y2="358" stroke="#5B7BA5" stroke-width="1.5" marker-end="url(#sosl-arr)"/>
+          <line x1="540" y1="334" x2="540" y2="358" stroke="#5B7BA5" stroke-width="1.5" marker-end="url(#sosl-arr)"/>
+          <line x1="900" y1="334" x2="900" y2="358" stroke="#5B7BA5" stroke-width="1.5" marker-end="url(#sosl-arr)"/>
+
+          <rect x="40" y="360" width="1000" height="42" rx="6" fill="#100a18" stroke="#301a40"/>
+          <text x="540" y="378" text-anchor="middle" class="lbl-em" font-size="11">Optional Stage 3 &mdash; for-each Apex refinement</text>
+          <text x="540" y="394" text-anchor="middle" class="lbl-mut" font-size="10">apply rules WHERE can't express: regex, parsed-field validation, cross-collection allowlists, conditional shape</text>
+        </svg>
+        <div class="figure-note">The result list ordering matches <span class="mono">RETURNING</span> declaration order: <span class="mono">r[0]</span> = Account, <span class="mono">r[1]</span> = Contact, <span class="mono">r[2]</span> = Lead. Cast each to its concrete type for compile-time safety. Stage 3 is optional but is what gives SOSL precision rules SQL can't express.</div>
+      </div>
+    </div>
+  </div>
 
   <div class="grid-3 gap-12">
 
@@ -2141,6 +2281,70 @@ fields                =  [MyField__c]</pre>
         </div>
 
         <div class="info-box mt-10"><strong>The takeaway:</strong> SOSL's reputation as "tokenized text only, no real WHERE" comes from the <span class="mono">NAME FIELDS</span> intro examples. The full grammar &mdash; <span class="mono">ALL FIELDS</span> + per-object <span class="mono">WHERE</span> / <span class="mono">ORDER BY</span> / <span class="mono">LIMIT</span> + Apex bind vars + iterative validation &mdash; gives you SOQL-style precision on top of search-index speed. This is the form most production lookups should take on LDV objects.</div>
+      </div>
+    </div>
+
+    <div class="card" style="grid-column: 1 / -1;" data-search="sosl syntax facts gotchas search groups reserved chars escape wildcards length limits delimiters apex rest reference">
+      <div class="ch ch-teal">&#9888;&#65039; SOSL Syntax Facts You'll Trip Over &mdash; Quick Reference</div>
+      <div class="cb">
+        <div class="grid-2 gap-12">
+
+          <div>
+            <div class="csec">Search Groups (the <span class="mono">IN</span> Clause)</div>
+            <table class="tbl">
+              <tbody>
+                <tr><td class="bf mono">IN ALL FIELDS</td><td>Default if <span class="mono">IN</span> omitted. All searchable text fields across returned objects.</td></tr>
+                <tr><td class="bf mono">IN NAME FIELDS</td><td>Name-only fields (Name, FirstName, LastName, AccountName, etc.).</td></tr>
+                <tr><td class="bf mono">IN EMAIL FIELDS</td><td>Email fields only.</td></tr>
+                <tr><td class="bf mono">IN PHONE FIELDS</td><td>Phone fields only.</td></tr>
+                <tr><td class="bf mono">IN SIDEBAR FIELDS</td><td>Whatever the global sidebar search would consider.</td></tr>
+              </tbody>
+            </table>
+            <div class="warn-box mt-6"><strong>Numeric / date / boolean fields are never tokenized.</strong> Filter on them via the per-object <span class="mono">RETURNING(... WHERE ...)</span> clause &mdash; not the FIND.</div>
+          </div>
+
+          <div>
+            <div class="csec">Length, Wildcards, Delimiters</div>
+            <table class="tbl">
+              <tbody>
+                <tr><td class="bf">Search query length</td><td><span class="mono">&gt; 10,000</span> chars: zero rows. <span class="mono">&gt; 4,000</span> chars: AND becomes OR (logical operators stripped).</td></tr>
+                <tr><td class="bf">Wildcard <span class="mono">*</span></td><td>Middle / end OK. <span class="text-red bold">Leading <span class="mono">*</span> not allowed</span> &mdash; SOSL never matches start-of-string.</td></tr>
+                <tr><td class="bf">Wildcard <span class="mono">?</span></td><td>Single char, middle/end. <span class="text-yellow">Not allowed in lookup search.</span></td></tr>
+                <tr><td class="bf">Apex delimiters</td><td><span class="mono">FIND 'Acme*'</span> with single quotes (or <span class="mono">FIND :term</span> bind).</td></tr>
+                <tr><td class="bf">SOAP / REST delimiters</td><td><span class="mono">FIND {Acme*}</span> with curly braces. <span class="text-yellow bold">Don't copy-paste between Apex and REST.</span></td></tr>
+                <tr><td class="bf">WITH HIGHLIGHT / SNIPPET</td><td>Wildcards suppress highlight/snippet. Wildcard term &rarr; no excerpt.</td></tr>
+                <tr><td class="bf">External objects (OData)</td><td>Strips logical operators in FIND; entire query becomes a single case-sensitive phrase.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div style="grid-column: 1 / -1;">
+            <div class="csec">Reserved Characters &mdash; Escape With <span class="mono">\</span> Before Binding</div>
+            <pre class="code-block"><span class="cm">// 19 SOSL-reserved chars per the SOQL/SOSL Reference</span>
+? &amp; | ! { } [ ] ( ) ^ ~ * : \ " ' + -
+
+<span class="cm">// One reusable escape helper (Apex)</span>
+<span class="kw">public static</span> <span class="kw">String</span> safeSoslTerm(<span class="kw">String</span> s) {
+    <span class="kw">if</span> (s == <span class="kw">null</span>) <span class="kw">return</span> <span class="st">''</span>;
+    <span class="kw">String</span>[] reserved = <span class="kw">new String</span>[]{
+        <span class="st">'?'</span>,<span class="st">'&amp;'</span>,<span class="st">'|'</span>,<span class="st">'!'</span>,<span class="st">'{'</span>,<span class="st">'}'</span>,<span class="st">'['</span>,<span class="st">']'</span>,<span class="st">'('</span>,<span class="st">')'</span>,
+        <span class="st">'^'</span>,<span class="st">'~'</span>,<span class="st">'*'</span>,<span class="st">':'</span>,<span class="st">'\\\\'</span>,<span class="st">'"'</span>,<span class="st">'\\\''</span>,<span class="st">'+'</span>,<span class="st">'-'</span>
+    };
+    <span class="kw">for</span> (<span class="kw">String</span> c : reserved) s = s.replace(c, <span class="st">'\\\\'</span> + c);
+    <span class="kw">return</span> s;
+}
+
+<span class="cm">// Use it before binding</span>
+<span class="kw">String</span> term = safeSoslTerm(userInput) + <span class="st">'*'</span>;
+<span class="kw">List</span>&lt;<span class="kw">List</span>&lt;<span class="cl">SObject</span>&gt;&gt; r = [<span class="kw">FIND</span> :term <span class="kw">RETURNING</span> Account(Id, Name <span class="kw">LIMIT</span> <span class="nu">50</span>)];</pre>
+            <ul class="bullet mt-6">
+              <li class="good">Apex bind variables (<span class="mono">:term</span>, <span class="mono">:since</span>, <span class="mono">:ownerId</span>) work fully inside <span class="mono">RETURNING(... WHERE ...)</span> &mdash; identical to SOQL</li>
+              <li class="good">Numeric, date, boolean, and lookup fields can be filtered freely in <span class="mono">RETURNING(... WHERE ...)</span> even though they're not tokenized in FIND</li>
+              <li class="warn">Always escape user input before binding via <span class="mono">:term</span> if input may contain reserved chars</li>
+            </ul>
+          </div>
+
+        </div>
       </div>
     </div>
 
