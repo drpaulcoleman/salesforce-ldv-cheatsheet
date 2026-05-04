@@ -3,3 +3,11 @@ docs/
 
 # Salesforce CLI workspace state — not part of the published cheatsheet
 .sfdx/
+audits/AUDIT_PROMPT.md
+audits/claude-audit.md
+audits/claude-stderr.log
+audits/codex-stdout.log
+audits/gemini-audit.md
+audits/gemini-stderr.log
+audits/AUDIT_PROMPT_LEAN.md
+audits/SYNTHESIS.md

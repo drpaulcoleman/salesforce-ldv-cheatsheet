@@ -935,7 +935,7 @@ ol.bullet li::before {
 <span class="kw">FROM</span> Opportunity
 <span class="kw">WHERE</span> IsDeleted = <span class="ok">false</span>
 <span class="kw">GROUP BY ROLLUP</span>(<span class="fn">WEEK_IN_YEAR</span>(CloseDate), <span class="fn">CALENDAR_YEAR</span>(CloseDate))</pre>
-        <div class="info-box mt-6"><strong>Why <span class="mono">IsDeleted = false</span>:</strong> ROLLUP queries include soft-deleted Recycle Bin records by default. Filter them out for an accurate active-data picture &mdash; the optimizer's pre-query also excludes them when sharing/visibility allows.</div>
+        <div class="info-box mt-6"><strong>About <span class="mono">IsDeleted = false</span>:</strong> standard SOQL (including <span class="mono">GROUP BY ROLLUP</span>) <span class="bold">automatically excludes</span> soft-deleted Recycle Bin records &mdash; the predicate is a defensive no-op here. It is only required when the call uses <span class="mono">ALL ROWS</span> scope or the SOAP <span class="mono">queryAll()</span> API. Keep it for documentation-of-intent; omit it if the explicit redundancy reads as confusing.</div>
         <div class="tip-box mt-6"><strong>Workflow:</strong> use ROLLUP to discover unselective values &rarr; rewrite filters to use selective ones (or stamp a real selective field per <a class="rref" href="#r10" onclick="navTo('r10');return false;">&sect;10</a>'s formula-field treatment) &rarr; verify the optimizer's chosen plan via R27's Query Explain.</div>
       </div>
     </div>
@@ -1065,7 +1065,13 @@ ol.bullet li::before {
             <tr><td>Queueable jobs</td><td class="numcell">50 / transaction</td></tr>
           </tbody>
         </table>
-        <div class="info-box mt-6"><strong>Async limits</strong> (Batch, Queueable, @future, Scheduled) double SOQL/DML budgets and double heap. Don't write code that <span class="bold">requires</span> async limits to function &mdash; that's a smell.</div>
+        <div class="info-box mt-6"><strong>Async limits</strong> (Batch, Queueable, @future, Scheduled) only relax three of the per-transaction caps above:
+          <ul class="bullet mt-4">
+            <li>SOQL <span class="bold">query count</span>: 100 &rarr; <span class="text-orange bold">200</span></li>
+            <li>Heap: 6 MB &rarr; <span class="text-orange bold">12 MB</span></li>
+            <li>CPU time: 10,000 ms &rarr; <span class="text-orange bold">60,000 ms</span> (6&times;, not 2&times;)</li>
+          </ul>
+          <span class="bold">DML statements (150), DML rows (10,000), and the SOQL row budget (50,000) are unchanged.</span> Code that <span class="bold">requires</span> the async expansions to function is a smell &mdash; the work belongs further async, archived, or off-platform.</div>
       </div>
     </div>
 
@@ -1094,10 +1100,10 @@ ol.bullet li::before {
     <div class="card warn" data-search="database cursor api cursor open limit shared session integration user querylocator querymore">
       <div class="ch ch-amber">&#128274; Open <span class="bold">Database Cursors</span> &mdash; the Integration-User Gotcha</div>
       <div class="cb">
-        <div class="text-sm mb-6">A <span class="bold">database cursor</span> is a server-side handle the platform allocates to track an in-progress query result set so the client can fetch additional pages. SOAP <span class="mono">queryLocator</span> (paged via <span class="mono">queryMore()</span>), REST query pagination (paged via <span class="mono">nextRecordsUrl</span>), Bulk API 2.0 query result sets, and Apex Cursors (<span class="mono">Database.getCursor()</span>, Spring '24+) each hold an open server-side cursor until it's <span class="bold">consumed to completion</span> or <span class="bold">times out</span>. None of these surfaces expose an explicit client-side close API &mdash; lifecycle is managed by exhaustion or expiration. Salesforce caps how many can be open <span class="bold">per user, per org</span>.</div>
+        <div class="text-sm mb-6">A <span class="bold">database cursor</span> is a server-side handle the platform allocates to track an in-progress query result set so the client can fetch additional pages. SOAP <span class="mono">queryLocator</span> (paged via <span class="mono">queryMore()</span>), REST query pagination (paged via <span class="mono">nextRecordsUrl</span>), and Apex Cursors / Pagination Cursors (<span class="mono">Database.getCursor()</span> / <span class="mono">Database.getPaginationCursor()</span>, Spring '24+) each hold an open server-side cursor until it's <span class="bold">consumed to completion</span> or <span class="bold">times out</span>. None of these surfaces expose an explicit client-side close API &mdash; lifecycle is managed by exhaustion or expiration. Salesforce caps how many can be open <span class="bold">per user, per org</span>. (Bulk API 2.0 query jobs are file-based, not cursor-based &mdash; results are stored as downloadable CSV batches and do not consume the per-user cursor pool; they have their own per-org concurrent-job and result-retention limits.)</div>
         <div class="info-box"><strong>Approximate caps</strong> (verify against current docs):</div>
         <ul class="bullet">
-          <li>Per user, per org: <span class="bold">~10 open database cursors</span> across SOAP <span class="mono">queryLocator</span> + REST query pagination + Bulk API result sets</li>
+          <li>Per user, per org: <span class="bold">~10 open API query cursors</span> across SOAP <span class="mono">queryLocator</span> + REST query pagination</li>
           <li>Apex Cursors (<span class="mono">Database.getCursor()</span>, Spring '24+) and Pagination Cursors share these per-user expiration limits with API Query cursors; per-transaction and per-day instance budgets are separate (see <span class="mono">Limits.getApexCursors()</span>, <span class="mono">Limits.getApexPaginationCursors()</span>)</li>
           <li>Default cursor lifetime before automatic cleanup: <span class="bold">~15 minutes</span> idle</li>
         </ul>
@@ -1507,7 +1513,7 @@ fields                =  [MyField__c]</pre>
       <div class="cb">
         <div class="text-xs text-muted mb-6">Per the latest Salesforce LDV Best Practices PDF:</div>
         <ul class="bullet">
-          <li class="good"><span class="bold">Custom index</span>: filter must match <span class="text-orange">&lt; 10% of total</span> records, <span class="bold">capped at 333,333</span>.</li>
+          <li class="good"><span class="bold">Custom index</span>: filter must match <span class="text-orange">&lt; 10% of first 1M + &lt; 5% of additional</span> records, <span class="bold">capped at 333,333</span>.</li>
           <li class="good"><span class="bold">Standard index</span>: <span class="text-orange">&lt; 30% of first 1M + &lt; 15% of additional</span>, capped at <span class="bold">1,000,000</span>.</li>
         </ul>
         <div class="info-box mt-8"><strong>Why both rule sets matter:</strong> Several still-circulating Salesforce blog posts cite intermediate or older rules ("5% to 2M, 5% beyond"). The current PDF (Spring '26) reaffirms the legacy 2013 ladders. Treat them as the working numbers.</div>
@@ -1752,7 +1758,7 @@ fields                =  [MyField__c]</pre>
         <div class="csec mt-8">Practical Numbers (Spring '26)</div>
         <table class="tbl">
           <tbody>
-            <tr><td class="bf">AND skip threshold</td><td class="numcell">&gt; 20% OR 666,666 rows</td></tr>
+            <tr><td class="bf">AND skip threshold</td><td class="numcell">&gt; 20% (per-filter "twice" rule)</td></tr>
             <tr><td class="bf">All filters indexed?</td><td>Required for any to be used</td></tr>
             <tr><td class="bf">Range collapse</td><td>Date/Number ranges on same field treated as ONE filter</td></tr>
           </tbody>
@@ -2858,7 +2864,7 @@ FxRates rates = (FxRates)
 <span class="kw">Sforce-Enable-PKChunking</span>: chunkSize=<span class="nu">100000</span></pre>
         <div class="text-sm mt-6 mb-6">Bulk API 2.0 splits the table by PK ranges and runs parallel sub-queries. The only reliable way to extract &gt; 10M rows.</div>
         <ul class="bullet">
-          <li class="good">Default chunk: 100K (range 50K-250K)</li>
+          <li class="good">Default chunk: 100K (range 100K-250K)</li>
           <li class="good">Works on <span class="mono">queryAll</span> too (includes deleted)</li>
           <li class="warn">Object must support PK Chunking (Account, Campaign, CampaignMember, Case, Contact, Lead, LoginHistory, Opportunity, Task, User, custom objects)</li>
         </ul>
@@ -3870,13 +3876,13 @@ FxRates rates = (FxRates)
 <div class="rb">
   <div class="grid-3 gap-12">
 
-    <div class="card support" data-search="skinny table support 200 columns custom standard objects">
+    <div class="card support" data-search="skinny table support 100 columns custom standard objects">
       <div class="ch ch-support">A &middot; Skinny Tables</div>
       <div class="cb">
         <div class="text-sm mb-6">A platform-managed, denormalized copy of frequently-accessed fields. <span class="bold">No soft-deleted rows.</span> No join between standard-fields-table and custom-fields-table at the DB level.</div>
         <div class="csec">Limits</div>
         <ul class="bullet">
-          <li><span class="bold">Max 100 / 200 columns</span> per skinny table (verify per Salesforce reference)</li>
+          <li><span class="bold">Max 100 columns</span> per skinny table</li>
           <li>Cannot include fields from other objects</li>
           <li>Read-only by definition</li>
           <li>Auto-syncs with source on changes</li>
@@ -3890,7 +3896,7 @@ FxRates rates = (FxRates)
       </div>
     </div>
 
-    <div class="card support" data-search="external id auto index unique upsert 6 field cap">
+    <div class="card support" data-search="external id auto index unique upsert 25 field cap">
       <div class="ch ch-support">B &middot; External IDs</div>
       <div class="cb">
         <div class="text-sm mb-6">Marking a field as <span class="bold">External ID</span> auto-creates an index. Marking <span class="bold">External ID + Unique</span> enables <span class="mono">upsert()</span> by external key.</div>
@@ -3902,14 +3908,14 @@ FxRates rates = (FxRates)
           <li class="good">Text</li>
           <li class="bad">NOT picklist, formula, currency, date, etc.</li>
         </ul>
-        <div class="csec mt-8">The 6-Per-Object Cap</div>
-        <div class="warn-box"><strong>Hard limit: 6 External IDs per object.</strong> Architectural reasons: each is a maintained index. Hit the cap?</div>
-        <div class="csec mt-6 text-violet">Going Beyond 6 (Support Path)</div>
+        <div class="csec mt-8">The 25-Per-Object Cap</div>
+        <div class="warn-box"><strong>Default limit: 25 External IDs per object.</strong> Each External ID is also a maintained custom index, and the per-entity custom-index cap is 25 by default &mdash; the two limits share the same budget. Hit the cap?</div>
+        <div class="csec mt-6 text-violet">Going Beyond 25 (Support Path)</div>
         <ul class="bullet">
           <li>Open a case with Salesforce Support</li>
           <li>Justify the need (per-system integration keys)</li>
           <li>Provide query plan / use cases</li>
-          <li>Often granted up to <span class="bold">15 per object</span></li>
+          <li>Increase is granted at Support's discretion</li>
         </ul>
         <div class="info-box mt-6"><strong>Better alternative:</strong> a single <span class="bold">composite key</span> field <span class="mono">"&lt;system&gt;:&lt;id&gt;"</span> on a single External ID field, with the system enum as part of the key. Reduces fragmentation.</div>
       </div>
@@ -4580,7 +4586,7 @@ Notes: <span class="ok">Index</span></pre>
       <tr><td class="numcell">5</td><td class="bf">Skinny Table to non-Full Sandbox</td><td>Need to test in Partial / Dev / Pro sandbox</td></tr>
       <tr><td class="numcell">6</td><td class="bf">Defer Sharing Calculations permission</td><td>Bulk loads / role reorgs / mass owner change</td></tr>
       <tr><td class="numcell">7</td><td class="bf">Granular Locking</td><td>Repeated "Group membership operation already in progress"</td></tr>
-      <tr><td class="numcell">8</td><td class="bf">External IDs &gt; 6 per object</td><td>Multiple integration systems, can't consolidate to a composite key</td></tr>
+      <tr><td class="numcell">8</td><td class="bf">External IDs &gt; 25 per object</td><td>Multiple integration systems, can't consolidate to a composite key</td></tr>
       <tr><td class="numcell">9</td><td class="bf">Divisions</td><td>&gt; 1M records on a single object AND &gt; 35 licenses</td></tr>
       <tr><td class="numcell">10</td><td class="bf">Query Timeout Increase</td><td>Temporary case for a specific job that exceeds the 120s default</td></tr>
       <tr><td class="numcell">11</td><td class="bf">Skinny Table Definition Refresh</td><td>You added/changed fields the skinny table needs</td></tr>
@@ -4804,8 +4810,8 @@ Notes: <span class="ok">Index</span></pre>
 
       <tr class="row-cat"><td colspan="2">Storage / Lifecycle</td></tr>
       <tr><td>Recycle Bin retention</td><td class="numcell">15 days</td></tr>
-      <tr><td>Skinny table column cap</td><td class="numcell">100 / 200</td></tr>
-      <tr><td>External IDs / object (default)</td><td class="numcell">6</td></tr>
+      <tr><td>Skinny table column cap</td><td class="numcell">100</td></tr>
+      <tr><td>External IDs / object (default)</td><td class="numcell">25</td></tr>
       <tr><td>Big Object scale</td><td class="numcell">1M &rarr; 100M &rarr; 1B</td></tr>
       <tr><td>Divisions eligibility</td><td class="numcell">&gt; 1M records, &gt; 35 licenses</td></tr>
       <tr><td>Database statistics refresh</td><td class="numcell">nightly</td></tr>
@@ -4930,7 +4936,7 @@ Notes: <span class="ok">Index</span></pre>
             <tr><td class="bf mono">Big Object</td><td>A high-volume Salesforce object designed for billion-row scale; SOQL-restricted (only its index fields). <a class="rref" href="#r27" onclick="navTo('r27');return false;">&sect;27</a></td></tr>
             <tr><td class="bf mono">External Object</td><td>An object whose data lives outside Salesforce, exposed via Salesforce Connect (typically OData). <a class="rref" href="#r27" onclick="navTo('r27');return false;">&sect;27</a></td></tr>
             <tr><td class="bf mono">Skinny Table</td><td>A Support-deployed denormalized read-only mirror of a hot subset of fields, used to short-circuit slow joins. <a class="rref" href="#r26" onclick="navTo('r26');return false;">&sect;26</a></td></tr>
-            <tr><td class="bf mono">External ID</td><td>A custom field marked unique &amp; indexed for cross-system identity / upsert. Default cap of 6 per object. <a class="rref" href="#r26" onclick="navTo('r26');return false;">&sect;26</a></td></tr>
+            <tr><td class="bf mono">External ID</td><td>A custom field marked unique &amp; indexed for cross-system identity / upsert. Default cap of 25 per object. <a class="rref" href="#r26" onclick="navTo('r26');return false;">&sect;26</a></td></tr>
             <tr><td class="bf mono">Data Cloud / Data 360</td><td>Salesforce's data lakehouse; the right place for warehouse-scale historical / aggregated data. <a class="rref" href="#r07" onclick="navTo('r07');return false;">&sect;07</a></td></tr>
             <tr><td class="bf mono">Heroku Connect</td><td>Bidirectional Salesforce &harr; Postgres synchronization, often used as a virtualization tier.</td></tr>
             <tr><td class="bf mono">Continuation</td><td>An Apex async pattern for long-running callouts that would exceed the request timeout. <a class="rref" href="#r28" onclick="navTo('r28');return false;">&sect;28</a></td></tr>
