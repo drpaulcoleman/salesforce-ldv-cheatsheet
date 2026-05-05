@@ -3,6 +3,7 @@ docs/
 
 # Salesforce CLI workspace state — not part of the published cheatsheet
 .sfdx/
+audits/
 audits/AUDIT_PROMPT.md
 audits/claude-audit.md
 audits/claude-stderr.log
