@@ -11,3 +11,7 @@ audits/gemini-audit.md
 audits/gemini-stderr.log
 audits/AUDIT_PROMPT_LEAN.md
 audits/SYNTHESIS.md
+audits/codex-r37-stdout.log
+audits/gemini-r37-audit.md
+audits/gemini-r37-stderr.log
+audits/R37_AUDIT_PROMPT.md
