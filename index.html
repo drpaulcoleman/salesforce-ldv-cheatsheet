@@ -3908,6 +3908,59 @@ FxRates rates = (FxRates)
         <div class="text-xs mt-4 text-muted">References: <a href="https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_batch_interface.htm" target="_blank">Apex Developer Guide / Batchable Interface</a> &middot; <a href="https://help.salesforce.com/s/articleView?id=sf.code_apex_flex_queue.htm&amp;type=5" target="_blank">Help / Apex Flex Queue</a> &middot; <a href="https://developer.salesforce.com/docs/atlas.en-us.apexref.meta/apexref/apex_class_System_FlexQueue.htm" target="_blank">Apex Reference / System.FlexQueue</a> &middot; <a href="https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_objects_asyncapexjob.htm" target="_blank">Object Reference / AsyncApexJob</a></div>
       </div>
 
+      <div class="info-box mt-32" style="font-size:13.2px;border-color:#46E3B7;background:rgba(70,227,183,0.06);"><strong>&#10024; Honorable Mention &mdash; Anonymous Apex via the Tooling REST API</strong>
+        <div class="text-sm mt-4">When the load logic genuinely needs to run inside Salesforce's Apex runtime (sharing context, governor budgets, in-org sObject types, automation cascading, transactional semantics) but the work is still a one-off, the <span class="bold">Tooling REST API's <span class="mono">executeAnonymous</span> endpoint</span> is the third-way option most teams forget exists. It runs Apex code submitted as a string, in the calling user's context, with <span class="bold">no deploy step, no test class, and nothing to clean up</span>.</div>
+
+        <pre class="code-block mt-6"><span class="cm">// HTTP — submit Apex source as a query parameter</span>
+<span class="kw">GET</span> /services/data/v60.0/tooling/executeAnonymous?anonymousBody=<span class="kw">&lt;URL-encoded Apex&gt;</span>
+
+<span class="cm">// Body — small one-off transform; runs as the authenticated user</span>
+<span class="cl">List&lt;Account&gt;</span> hot = [<span class="kw">SELECT</span> Id <span class="kw">FROM</span> Account <span class="kw">WHERE</span> Hot__c = <span class="ok">true</span> <span class="kw">LIMIT</span> <span class="nu">200</span>];
+<span class="kw">for</span> (<span class="cl">Account</span> a : hot) { a.LastReviewed__c = <span class="cl">Date</span>.today(); }
+<span class="kw">update</span> hot;
+<span class="cl">System</span>.debug(<span class="cl">LoggingLevel</span>.<span class="kw">INFO</span>, <span class="st">'Updated '</span> + hot.size() + <span class="st">' accounts'</span>);</pre>
+
+        <div class="csec mt-8 text-yellow">What you get back &mdash; and what you don't</div>
+        <div class="text-sm mb-4">The response is a <span class="bold">semi-structured execution log</span>, not a concrete return value:</div>
+        <pre class="code-block">{
+  <span class="st">"compiled"</span>: <span class="ok">true</span>,
+  <span class="st">"success"</span>: <span class="ok">true</span>,
+  <span class="st">"compileProblem"</span>: <span class="kw">null</span>,
+  <span class="st">"exceptionMessage"</span>: <span class="kw">null</span>,
+  <span class="st">"exceptionStackTrace"</span>: <span class="kw">null</span>,
+  <span class="st">"line"</span>: -<span class="nu">1</span>, <span class="st">"column"</span>: -<span class="nu">1</span>
+}</pre>
+        <div class="text-sm mt-4">There is <span class="bold">no</span> <span class="mono">return</span> value channel &mdash; the API has no concept of a return type. The only way to surface data <em>back</em> to the caller is via <span class="mono">System.debug()</span> calls and a separately-captured <span class="bold"><span class="mono">ApexLog</span></span> record. Which means logging discipline isn't optional &mdash; it's the entire data-egress mechanism.</div>
+
+        <div class="csec mt-8 text-yellow">Logging level &mdash; the gotcha that swallows your output</div>
+        <ul class="bullet">
+          <li class="warn"><span class="bold">Without an active <span class="mono">TraceFlag</span></span> on the executing user (debug levels file: <span class="mono">ApexCode = DEBUG</span> / <span class="mono">FINE</span> / <span class="mono">FINEST</span>), <span class="mono">System.debug()</span> output <span class="bold">is not recorded</span>. Your <span class="mono">executeAnonymous</span> call returns <span class="mono">success: true</span> and you have no idea what the code actually did.</li>
+          <li class="good">Set the <span class="mono">TraceFlag</span> via the Tooling API <span class="bold">before</span> the call: target the executing user, time-bound to the load window, with a <span class="mono">DebugLevel</span> that has <span class="mono">ApexCode</span> elevated (other categories can stay at <span class="mono">INFO</span> to keep the log small)</li>
+          <li class="good">Query <span class="mono">ApexLog</span> immediately after for the matching <span class="mono">RequestId</span>; download the log body and parse <span class="mono">USER_DEBUG</span> lines for your output</li>
+          <li class="good"><span class="mono">LoggingLevel.INFO</span> on every diagnostic <span class="mono">System.debug()</span> &mdash; matches the trace-flag minimum and keeps low-noise lines findable</li>
+        </ul>
+
+        <div class="csec mt-8">When Anonymous Apex is the right one-off tool</div>
+        <table class="tbl">
+          <thead><tr><th>Scenario</th><th>Fit</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>Mass data fix with non-trivial Apex transform logic</td><td class="text-green bold">&#10003;</td><td>No deploy; runs in the user's context with full Apex semantics</td></tr>
+            <tr><td>Need triggers / Flows / validations to fire as in normal save context</td><td class="text-green bold">&#10003;</td><td>Anonymous Apex executes through the standard runtime &mdash; automation fires</td></tr>
+            <tr><td>Recompute formula-equivalent values across a small/medium set</td><td class="text-green bold">&#10003;</td><td>Sync transaction caps fit (10K DML rows, 50K SOQL rows)</td></tr>
+            <tr><td>Sandbox testing scratch / explore data state interactively</td><td class="text-green bold">&#10003;</td><td>Faster than deploy/run/undeploy iteration</td></tr>
+            <tr><td>Need a structured, typed return value to the caller</td><td class="text-red bold">&#10007;</td><td>Response carries no data channel; only debug-log capture works</td></tr>
+            <tr><td>Volume exceeds sync caps (&gt; 10K DML rows / 50K SOQL rows / 6 MB heap / 10K CPU ms)</td><td class="text-red bold">&#10007;</td><td>Use Bulk API 2.0 (volume) or Batch Apex (compute)</td></tr>
+            <tr><td>Repeating / scheduled execution</td><td class="text-red bold">&#10007;</td><td>Deploy a Queueable, Batch, or Scheduled class &mdash; the lifecycle tax is paid once and amortized</td></tr>
+            <tr><td>Long-running work (multi-minute)</td><td class="text-red bold">&#10007;</td><td>Sync transaction; will hit CPU / SOQL / time caps. Use async</td></tr>
+            <tr><td>Auditable, repeatable change with a code review</td><td class="text-red bold">&#10007;</td><td>The whole pitch is "no deploy" &mdash; you give up source control of the change. Capture the script externally if traceability matters</td></tr>
+          </tbody>
+        </table>
+
+        <div class="text-sm mt-6"><span class="bold">Mental model:</span> Anonymous Apex is the in-org equivalent of an external script &mdash; throw-away by design, runs in the platform's runtime instead of yours, and trades concrete return types for log-capture telemetry. Pair it with the JWT bearer flow (<a class="rref" href="#r24" onclick="navTo('r24');return false;">card B</a>) for unattended one-off jobs.</div>
+
+        <div class="text-xs mt-4 text-muted">References: <a href="https://developer.salesforce.com/docs/atlas.en-us.api_tooling.meta/api_tooling/intro_api_tooling.htm" target="_blank">Tooling API Developer Guide</a> &middot; <a href="https://developer.salesforce.com/docs/atlas.en-us.api_tooling.meta/api_tooling/sforce_api_tooling_rest_resources_executeanonymous.htm" target="_blank">Tooling REST / executeAnonymous</a> &middot; <a href="https://developer.salesforce.com/docs/atlas.en-us.api_tooling.meta/api_tooling/tooling_api_objects_traceflag.htm" target="_blank">Tooling / TraceFlag</a> &middot; <a href="https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_objects_apexlog.htm" target="_blank">Object Reference / ApexLog</a> &middot; <a href="https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_class_System_LoggingLevel.htm" target="_blank">Apex Reference / LoggingLevel</a></div>
+      </div>
+
       <div class="text-xs mt-8"><span class="text-muted">References:</span> &nbsp;
         <a href="https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_batch_interface.htm" target="_blank">Apex Developer Guide / Batchable Interface</a> &middot;
         <a href="https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_rest_intro.htm" target="_blank">Apex REST Services Overview</a>
