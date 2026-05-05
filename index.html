@@ -577,13 +577,14 @@ ol.bullet li::before {
 
   <div class="grid-2 gap-12">
 
-    <div class="card" data-search="tldr top five things to remember selectivity skew async archive diagnostics">
-      <div class="ch ch-orange">&#127919; The Five Things to Remember</div>
+    <div class="card" data-search="tldr top six things to remember selectivity skew async archive diagnostics loads">
+      <div class="ch ch-orange">&#127919; The Six Things to Remember</div>
       <div class="cb">
         <ol class="bullet">
           <li><span class="bold">Only the most actionable data belongs in the CRM.</span> Salesforce is a transactional system of engagement &mdash; not a data lake, warehouse, archive, or 10-year reporting backend. Every record kept "just in case" pays a daily tax in slower queries, longer sharing recalcs, fatter sandboxes, and dimmer Optimizer scores. Archive or virtualize the rest. <a class="rref" href="#r27" onclick="navTo('r27');return false;">&sect;27</a> &middot; <a class="rref" href="#r29" onclick="navTo('r29');return false;">&sect;29</a></li>
           <li><span class="bold">Selectivity beats everything else.</span> Once the data set is right-sized, a query that returns &lt; 10% of rows on an indexed leading filter is fast at any scale. A query that doesn't is slow at any scale. <a class="rref" href="#r07" onclick="navTo('r07');return false;">&sect;07</a></li>
           <li><span class="bold">Skew is silent until it explodes.</span> &gt; 10K children per parent, &gt; 10K records per owner, &gt; 10K records per lookup &mdash; each is a lock-storm waiting for a bulk job. <a class="rref" href="#r21" onclick="navTo('r21');return false;">&sect;21</a></li>
+          <li><span class="bold">Apex is rarely the right tool for a one-off load.</span> Custom <span class="mono">@RestResource</span> competes in the org-wide 10-concurrent-long-running pool and can't horizontally scale; Batch Apex pays a deploy/test-cover/destructive-changes lifecycle tax. Pick by shape and volume &mdash; Bulk API 2.0 for parallel volume, REST <span class="mono">Composite</span>/<span class="mono">Tree</span> for transactional cascades, an external script through Bulk for throw-aways. <a class="rref" href="#r24" onclick="navTo('r24');return false;">&sect;24</a></li>
           <li><span class="bold">Measure before redesigning.</span> Query Plan tells you whether an index is in use; Scale Center tells you whether the org is healthy; Apex Guru tells you what to fix first. <a class="rref" href="#r31" onclick="navTo('r31');return false;">&sect;31</a> &middot; <a class="rref" href="#r32" onclick="navTo('r32');return false;">&sect;32</a></li>
           <li><span class="bold">Test at scale before cutover.</span> Scale Test in Full Sandbox is the only sanctioned way to validate LDV behavior pre-prod. The lock-contention class of regression cannot be reversed in flight. <a class="rref" href="#r32" onclick="navTo('r32');return false;">&sect;32</a></li>
         </ol>
