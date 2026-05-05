@@ -5822,10 +5822,26 @@ function syncActiveNav(id) {
   });
 }
 
+/* Body uses overflow:hidden and #viewport is a fixed-positioned overflow:auto
+   container; el.scrollIntoView() can be flaky in that topology because
+   browsers vary on whether they walk up to a fixed-positioned scrollable
+   ancestor. Compute the offset relative to #viewport and scroll it
+   explicitly — deterministic across browsers and reload paths. */
 function scrollToRegion(id, smooth) {
   const el = document.getElementById(id);
   if (!el) return false;
-  el.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' });
+  /* Cumulative offsetTop from the element up to the viewport */
+  let top = 0;
+  let n = el;
+  while (n && n !== viewport && n !== document.body) {
+    top += n.offsetTop;
+    n = n.offsetParent;
+  }
+  const SCROLL_MARGIN = 16;
+  viewport.scrollTo({
+    top: Math.max(0, top - SCROLL_MARGIN),
+    behavior: smooth ? 'smooth' : 'auto'
+  });
   flashHighlight(el);
   syncActiveNav(id);
   return true;
@@ -5856,16 +5872,35 @@ window.addEventListener('popstate', () => {
   }
 });
 
-/* Direct/deep links: arrive on the page with #rXX in URL */
-window.addEventListener('load', () => {
-  if (location.hash) {
-    const id = location.hash.replace('#', '');
-    suppressScrollspyUntil = Date.now() + 1000;
-    scrollspyCurrentId = id;
-    /* Defer one frame so layout settles before scroll */
-    setTimeout(() => scrollToRegion(id, false), 60);
-  }
-});
+/* Tell the browser to stop restoring scroll position on reload — we own it. */
+if ('scrollRestoration' in history) {
+  history.scrollRestoration = 'manual';
+}
+
+/* Deep-link landing — runs on initial load AND on bfcache restore (pageshow).
+   Also re-trigger on hashchange so typing/pasting #rXX in the URL bar works. */
+function handleDeepLink(reason) {
+  if (!location.hash) return;
+  const id = location.hash.replace('#', '');
+  if (!document.getElementById(id)) return;
+  suppressScrollspyUntil = Date.now() + 1000;
+  scrollspyCurrentId = id;
+  /* Two attempts: immediate (best when layout is already done) and one rAF
+     later (covers cases where fonts / images haven't settled yet). */
+  scrollToRegion(id, false);
+  requestAnimationFrame(() => scrollToRegion(id, false));
+}
+
+/* Run as soon as DOM is parsed (don't wait for all subresources). */
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => handleDeepLink('domready'));
+} else {
+  handleDeepLink('immediate');
+}
+/* Catches reloads with hash, browser back from external page, etc. */
+window.addEventListener('pageshow', () => handleDeepLink('pageshow'));
+/* Catches manual hash edits in the URL bar. */
+window.addEventListener('hashchange', () => handleDeepLink('hashchange'));
 
 /* ─── Scrollspy: keep URL hash and sidebar in sync as the user scrolls ─── */
 const sectionEls = Array.from(document.querySelectorAll('.region'));
