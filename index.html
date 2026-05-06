@@ -3752,7 +3752,7 @@ FxRates rates = (FxRates)
   <!-- ───────────────────────────────────────────────
        A — The Throw-Away Apex Tax
        ─────────────────────────────────────────────── -->
-  <div class="card danger mb-20" data-search="throw-away apex one-off load test coverage destructive change-set deployment lifecycle anti-pattern initial migration">
+  <div class="card danger mb-20" data-search="throw-away apex one-off load test coverage destructive change-set deployment lifecycle anti-pattern initial migration batch apex scale performance flex queue stateful prioritization scheduling teardown anonymous apex tooling rest executeanonymous traceflag apexlog logginglevel debug">
     <div class="ch ch-red">A &middot; The Throw-Away Apex Tax &mdash; Why Apex Is Rarely Right for One-Off Loads</div>
     <div class="cb">
 
@@ -6002,12 +6002,51 @@ window.addEventListener('load', onScrollspy);
 const searchBox = document.getElementById('search-box');
 searchBox.addEventListener('input', () => {
   const q = searchBox.value.trim().toLowerCase();
-  const els = document.querySelectorAll('[data-search],.card,.region');
-  if (!q) { els.forEach(el => el.classList.remove('search-dim')); return; }
-  els.forEach(el => {
-    const text = (el.getAttribute('data-search') || '') + ' ' + el.textContent;
-    el.classList.toggle('search-dim', !text.toLowerCase().includes(q));
+  const cards = document.querySelectorAll('[data-search],.card');
+  const regions = document.querySelectorAll('.region');
+  const navItemsAll = document.querySelectorAll('.nav-item');
+  if (!q) {
+    cards.forEach(el => el.classList.remove('search-dim'));
+    regions.forEach(el => el.classList.remove('search-dim'));
+    navItemsAll.forEach(el => el.classList.remove('search-dim'));
+    /* Clear any per-section badge */
+    const badge = document.getElementById('search-count');
+    if (badge) badge.remove();
+    return;
+  }
+  /* Pass 1: dim non-matching cards and remember which regions had hits. */
+  const regionMatches = new Set();
+  cards.forEach(el => {
+    const text = ((el.getAttribute('data-search') || '') + ' ' + el.textContent).toLowerCase();
+    const matches = text.includes(q);
+    el.classList.toggle('search-dim', !matches);
+    if (matches) {
+      const region = el.closest('.region');
+      if (region) regionMatches.add(region.id);
+    }
   });
+  /* Pass 2: dim non-matching regions (also covers region-only text outside any card). */
+  regions.forEach(el => {
+    const text = ((el.getAttribute('data-search') || '') + ' ' + el.textContent).toLowerCase();
+    const matches = text.includes(q);
+    el.classList.toggle('search-dim', !matches);
+    if (matches) regionMatches.add(el.id);
+  });
+  /* Pass 3: dim sidebar nav-items whose region didn't match. */
+  navItemsAll.forEach(el => {
+    const oc = el.getAttribute('onclick') || '';
+    const m = oc.match(/navTo\('(r\d+)'\)/);
+    if (m) el.classList.toggle('search-dim', !regionMatches.has(m[1]));
+  });
+  /* Show match count next to the search box. */
+  let badge = document.getElementById('search-count');
+  if (!badge) {
+    badge = document.createElement('span');
+    badge.id = 'search-count';
+    badge.style.cssText = 'margin-left:8px;font-size:11px;color:#79C0FF;font-family:"Source Code Pro",monospace;';
+    searchBox.parentNode.insertBefore(badge, searchBox.nextSibling);
+  }
+  badge.textContent = regionMatches.size + ' section' + (regionMatches.size === 1 ? '' : 's');
 });
 
 document.addEventListener('keydown', e => {
