@@ -1,0 +1,176 @@
+# Salesforce Large Data Volumes (LDV) Architect Cheatsheet
+
+> Independent, unofficial technical reference distilled from publicly available Salesforce documentation and architect best-practice literature. Not affiliated with, sponsored by, or endorsed by Salesforce, Inc. Version V1.0.0. Last modified 2026-05-04.
+
+## Overview
+
+This is a comprehensive single-page HTML reference for Salesforce architects working with Large Data Volume (LDV) orgs. It covers query optimization, indexing, selectivity, data skew, record locking, bulk API strategies, archival architecture, and diagnostic tooling across 38 numbered regions (R00–R37).
+
+The core philosophy: Salesforce is a transactional CRM system of engagement — not a data lake. Keep only actionable data hot. Archive or virtualize the rest.
+
+## Core Mental Model
+
+Every LDV problem maps to one or more of four levers, pulled in order:
+
+1. **Selectivity** — Every query must hit an index returning < 10% of rows
+2. **Skew** — No parent/owner/lookup value should hold > 10K children
+3. **Async** — Heavy work must run outside user-blocking transactions
+4. **Archive** — The working data set must be as small as possible
+
+## Sections
+
+### R00 — Executive Summary
+The cheatsheet in four cards: six things to remember, the OOTB diagnostic stack, license/cost matrix, and symptom-to-region quick chooser.
+
+### R01 — What Is LDV? The 4-Lever Mental Model
+LDV triggers (tens of millions of records, tens of thousands of users, hundreds of GB storage). Symptom-driven assessment. The hot/warm/cold data philosophy.
+
+### R02 — Multi-Tenant Force.com Architecture
+Heap storage model (virtual tables over shared physical Oracle/Postgres tables). Why traditional DB tuning fails. Custom fields need separate index tables. Search index has ~15 min lag from SOQL writes.
+
+### R03 — The Lightning Platform Query Optimizer
+The engine behind every SOQL. Picks the leading index, orders joins, injects sharing joins. Statistics refresh nightly — expect 24–48h "wobble" after massive loads. How to inspect selectivity yourself with GROUP BY ROLLUP.
+
+### R04 — Biggest Offender Patterns
+"Don't be this guy" — the most common anti-patterns that cause LDV failures.
+
+### R05 — Reports, List Views, Triggers & Flows at LDV
+Anti-patterns specific to declarative surfaces that generate non-selective queries.
+
+### R06 — Governor Limits & Cursor Gotchas
+The numerical limits hit first at LDV scale: query timeouts, concurrent long-running Apex, API cursor limits.
+
+### R07 — Indexed Fields, Custom Indexes & What Cannot Be Indexed
+Standard indexed fields, custom index types, fields that cannot be indexed, and how to request custom indexes via Support.
+
+### R08 — Selectivity Thresholds & Index Threshold Ladders
+The < 10% / < 333K row rule for standard indexes, < 5% / < 100K for custom indexes. Threshold ladders by record count.
+
+### R09 — Index-Defeating Query Patterns
+Filters that force full table scans: leading wildcards, NOT/negative operators, formula fields, non-deterministic functions, OR across non-indexed fields.
+
+### R10 — AND / OR / LIKE Optimizer Behavior
+Composite filter rules. AND narrows (uses the most selective index). OR widens (ALL legs must be selective or falls back to full scan). LIKE behavior with trailing vs leading wildcards.
+
+### R11 — Two-Pass Query Pattern
+Salvaging non-selective filters by splitting into a selective first pass and a targeted second pass.
+
+### R12 — SOSL vs SOQL Decision Matrix
+When to use full-text search (SOSL) vs structured query (SOQL). Trade-offs in latency, indexing lag, and result limits.
+
+### R13 — SOSL→SOQL Fallback & Cache-Latency Patterns
+Not-found recovery when search index hasn't caught up. The ~15 min lag requires fallback SOQL for recently-created records.
+
+### R14 — Platform Cache as LDV Pain Mitigation
+Org cache and session cache patterns to reduce repetitive queries. TTL strategies, partition sizing.
+
+### R15 — Iteration / Memory Stack Patterns
+Chunking without heap death. The Rule of 200 (platform chunks operations into 200-record batches). Iterable vs QueryLocator in Batch Apex. Cursor-based pagination.
+
+### R16 — USING SCOPE & WITH USER_MODE / SYSTEM_MODE
+How scope filters and security mode affect query optimizer behavior and sharing join injection.
+
+### R17 — Record Locking — The Additive Principle
+Platform locks are additive: parent + child + sharing group locks compound. Lock duration, retry strategies.
+
+### R18 — Object-Specific Locking Matrix
+Which standard objects acquire locks on which related objects during DML.
+
+### R19 — Custom Configuration & Sharing Locks
+FOR UPDATE, Master-Detail, Lookup, Roll-Up Summary, and Share table locking behavior.
+
+### R20 — UNABLE_TO_LOCK_ROW Recovery & Prevention
+Diagnosis, retry patterns, DML reordering, and architectural prevention strategies.
+
+### R21 — Data Skew — The Three Forms & Mitigations
+Parent skew (> 10K children per parent), ownership skew (> 10K records per owner), lookup skew (> 10K records per lookup value). Detection queries and mitigation patterns.
+
+### R22 — Defer Sharing Calculations, Granular Locking & Parallel Sharing Recalc
+Support-enabled features for large orgs with complex sharing models.
+
+### R23 — Bulk API 2.0, DML Order & PK Chunking
+Loading right at scale. Serial vs parallel mode. PK Chunking for extract. DML ordering to avoid lock contention.
+
+### R24 — Large Volume Data Uploads — Choosing the Right Surface
+Decision matrix for one-off and initial loads: Bulk API 2.0, REST Composite/Tree, sObject Collections, Data Loader, SF CLI, MuleSoft, custom Apex, external scripts.
+
+### R25 — Delete Strategies
+Soft delete, hard delete, and object truncation. Recycle Bin implications. Mass delete governor limits.
+
+### R26 — Continuations & LWC Async Pattern Family
+Don't block user threads. Continuations for callouts, Platform Events + empApi for push, Change Data Capture for sync.
+
+### R27 — Salesforce CRM vs Data Cloud / Data 360
+Right tool for the volume. When data belongs in the CRM vs Data Cloud for analytics and unification at scale.
+
+### R28 — Skinny Tables, External IDs, Two-Column & Null-Inclusive Indexes
+Support-provisioned performance artifacts. Skinny tables for wide objects. Two-column indexes for compound filters. Null-inclusive indexes for IS NULL queries.
+
+### R29 — Hot/Cold Architecture
+Big Objects for warm archival, Salesforce Connect / External Objects for cold virtualization, Heroku Connect for bidirectional sync.
+
+### R30 — Shield Real-Time Event Monitoring — The LDV Diagnostic Microscope
+ReportEvent, ApiEvent, LightningPageView, ConcurrentLongRunningApexLimit, and other streaming events for deep performance diagnosis.
+
+### R31 — Query Performance Feedback (SOQL Explain), Optimizer App & Event Logs
+The platform-mediated equivalent of EXPLAIN. Dev Console Query Plan tool, REST ?explain= endpoint, Optimizer App scores, Event Log Files.
+
+### R32 — Scale Center, Scale Test, Apex Guru, Lightning Usage
+The OOTB performance stack: Scale Center for org health, Scale Test for pre-cutover validation, Apex Guru for code-level recommendations, Lightning Usage for page-level TTI.
+
+### R33 — When To Contact Salesforce Customer Support
+What to request (custom indexes, skinny tables, defer sharing calc, granular locking), what to bring (Query Plan output, record counts, reproduction steps).
+
+### R34 — AI-Assisted LDV Audits
+Using AI (Claude, GPT, Gemini) to audit Apex classes, Flows, and archival policies for LDV anti-patterns beyond what Apex Guru covers.
+
+### R35 — Numerical Threshold Index
+All numerical thresholds in one place: selectivity percentages, record-count gates, governor limits, timeout values.
+
+### R36 — Glossary
+LDV acronyms and jargon definitions.
+
+### R37 — Citations & Further Reading
+Authoritative Salesforce documentation sources for all numerical thresholds and architectural recommendations.
+
+## Key Thresholds (Quick Reference)
+
+- Standard index selectivity: < 10% of total records OR < 333,333 rows
+- Custom index selectivity: < 5% of total records OR < 100,000 rows
+- Parent/ownership/lookup skew danger zone: > 10,000 records per value
+- Query timeout: 120 seconds (default)
+- Concurrent long-running Apex limit: 10 per org
+- Bulk API batch size: 10,000 records per batch
+- Platform chunking unit: 200 records (triggers, Batch Apex, SOAP)
+- Search index lag: ~15 minutes from write to searchable
+- Statistics refresh: nightly (expect 24–48h wobble after large loads)
+
+## Diagnostic Tool Ladder (Climb in Order)
+
+1. Query Plan / SOQL Explain — free, seconds — "Will this query use an index?"
+2. Apex Guru — Performance/Unlimited edition — "What in my code to fix first?"
+3. Lightning Usage App — free — "Which page feels slow to users?"
+4. Scale Center — Performance/Unlimited edition — "Is the org healthy?"
+5. Shield REM + Event Log Files — Shield add-on — "Why did request X take 47s?"
+6. Scale Test — Full Sandbox — "Will the org survive 5x load?"
+
+## Citations
+
+- LDV Best Practices: https://developer.salesforce.com/docs/atlas.en-us.salesforce_large_data_volumes_bp.meta/salesforce_large_data_volumes_bp/
+- DRAES (Designing Record Access for Enterprise Scale): https://developer.salesforce.com/docs/atlas.en-us.draes.meta/draes/
+- Salesforce Architects: https://architect.salesforce.com/
+- SOQL/SOSL Reference: https://developer.salesforce.com/docs/atlas.en-us.soql_sosl.meta/soql_sosl/sforce_api_calls_soql_sosl_intro.htm
+- Bulk API 2.0: https://developer.salesforce.com/docs/atlas.en-us.api_asynch.meta/api_asynch/asynch_api_intro.htm
+- Apex Governor Limits: https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_gov_limits.htm
+- Record Locking Cheatsheet: https://resources.docs.salesforce.com/rel1/doc/en-us/static/pdf/SF_Record-Locking-Cheatsheet_web.pdf
+- Big Objects: https://developer.salesforce.com/docs/atlas.en-us.bigobjects.meta/bigobjects/big_object.htm
+- Data Cloud: https://help.salesforce.com/s/articleView?id=sf.c360_a_data_cloud.htm&type=5
+- Scale Center: https://help.salesforce.com/s/articleView?id=sf.scale_center.htm&type=5
+
+## License
+
+Mozilla Public License 2.0. Copyright (c) 2026 Dr. Paul Coleman. All rights reserved.
+
+## AI Disclaimer
+
+Drafted with the assistance of Anthropic Claude, OpenAI Codex, and Google Gemini. Numerical thresholds and governor limits are sourced from Salesforce documentation. Always verify against the current Salesforce release notes before production use.
